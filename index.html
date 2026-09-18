@@ -1,0 +1,2029 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+  <title>YerbaMateSim — Business Operations Simulator</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data:; connect-src 'none';">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Top Bar: Persistent Survival Header (RF-01, RF-02) -->
+  <header class="top-bar" id="survival-header">
+    <div class="brand">
+      <h1>🍃 YerbaMateSim</h1>
+      <span class="badge">MVP 2.0</span>
+      <div class="student-pill" id="student-badge" title="Estudiante identificado">
+        <span class="student-icon">🎓</span>
+        <span id="display-student-name">Estudiante</span>
+        <span class="student-id-tag" id="display-student-id">LEG-00000</span>
+      </div>
+    </div>
+
+    <div class="timeline-tracker">
+      <div class="timeline-info">
+        <span>Semana <strong id="display-week">1</strong> de 120 (<span id="display-progress-pct">0.8%</span>)</span>
+        <span class="rate-badge">Tasa Semanal: <strong id="display-interest-rate">0.74%</strong></span>
+      </div>
+      <div class="progress-bar-bg">
+        <div id="display-progress" class="progress-bar-fill"></div>
+      </div>
+    </div>
+
+    <!-- Unified 4x2 Metrics Matrix: Row 1 Financial KPIs, Row 2 Market Ticker (Corrección 1) -->
+    <div class="header-metrics-matrix">
+      <!-- Row 1: Persistent Global Financial KPIs (RF-01, RF-02) -->
+      <div class="header-kpis">
+        <div class="kpi-item">
+          <div class="kpi-label">Caja Disponible</div>
+          <div class="kpi-val val-positive" id="header-cash">$0.00</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kpi-label">Deuda Bancaria</div>
+          <div class="kpi-val val-danger" id="header-debt">$0.00</div>
+        </div>
+        <div class="kpi-item">
+          <div class="kpi-label">Patrimonio Neto</div>
+          <div class="kpi-val val-positive" id="header-networth">$0.00</div>
+        </div>
+        <div class="kpi-item" id="header-leverage-container">
+          <div class="kpi-label">Apalancamiento (D/A)</div>
+          <div class="kpi-val val-positive" id="header-leverage">0.0%</div>
+        </div>
+      </div>
+
+      <!-- Row 2: Real-time Market Ticker -->
+      <div class="market-ticker">
+        <div class="ticker-item">
+          <div class="ticker-label">
+            Hoja Verde (Spot)
+            <button class="glossary-trigger-badge" data-glossary="hoja_verde" type="button" title="Ver en Glosario INTA" aria-label="Ver Hoja Verde en Glosario">ℹ️</button>
+          </div>
+          <div class="ticker-val" id="ticker-leaf">$0.00</div>
+        </div>
+        <div class="ticker-item">
+          <div class="ticker-label">
+            Yerba Canchada (Spot)
+            <button class="glossary-trigger-badge" data-glossary="canchada" type="button" title="Ver en Glosario INTA" aria-label="Ver Canchada en Glosario">ℹ️</button>
+          </div>
+          <div class="ticker-val" id="ticker-canchada">$0.00</div>
+        </div>
+        <div class="ticker-item">
+          <div class="ticker-label">
+            Yerba Elaborada IRAM 20550 (1kg)
+            <button class="glossary-trigger-badge" data-glossary="iram20550" type="button" title="Ver en Glosario IRAM" aria-label="Ver IRAM 20550 en Glosario">ℹ️</button>
+          </div>
+          <div class="ticker-val" id="ticker-final">$0.00</div>
+        </div>
+        <div class="ticker-item">
+          <div class="ticker-label">Demanda Semanal</div>
+          <div class="ticker-val" id="ticker-demand">0 kg</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Header Actions: Theme Toggle, Glosario & Game Guide (RF-02, RF-04) -->
+    <div class="header-actions">
+      <button id="btn-open-glossary" class="btn btn-secondary header-btn" type="button" title="Glosario Agroindustrial INTA / IRAM y Manual de Buenas Prácticas" aria-label="Abrir Glosario INTA">
+        <span>📚</span>
+        <span>Glosario INTA</span>
+      </button>
+      <button id="btn-open-guide" class="btn btn-secondary header-btn" type="button" title="Guía de Juego y Reglas del Negocio" aria-label="Abrir Guía">
+        <span>📖</span>
+        <span>Guía</span>
+      </button>
+      <button id="btn-theme-toggle" class="theme-toggle-btn" type="button" title="Alternar Modo Claro / Oscuro" aria-label="Alternar tema">
+        <span class="theme-icon theme-icon-sun">☀️</span>
+        <span class="theme-icon theme-icon-moon">🌙</span>
+        <span class="theme-label" id="theme-status-text">Oscuro</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Grid -->
+  <main class="main-grid">
+
+    <!-- Panel Izquierdo: Tablero Financiero del Jugador -->
+    <aside>
+      <div class="card">
+        <h2 class="card-title">💼 Tu Empresa (Finanzas)</h2>
+        <div class="metric-row">
+          <span>Efectivo Disponible:</span>
+          <span id="p-cash" class="metric-val val-positive">$0.00</span>
+        </div>
+        <div class="metric-row">
+          <span>Deuda Bancaria:</span>
+          <span id="p-debt" class="metric-val val-danger">$0.00</span>
+        </div>
+        <div class="metric-row">
+          <span>Activos Totales:</span>
+          <span id="p-assets" class="metric-val">$0.00</span>
+        </div>
+        <div class="metric-row">
+          <span>Patrimonio Neto:</span>
+          <span id="p-networth" class="metric-val val-positive">$0.00</span>
+        </div>
+        <div class="metric-row">
+          <span>Apalancamiento (D/A):</span>
+          <span id="p-leverage" class="metric-val val-positive">0.0%</span>
+        </div>
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:8px;">
+          * TNA: 39.0% | TEA: 46.8% (0.743% semanal)<br/>
+          * Quiebra si Apalancamiento &gt; 80%
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">💾 Gestión y Auditoría</h2>
+        <div class="controls-row">
+          <button id="btn-export" class="btn btn-secondary" style="flex:1;">Exportar JSON</button>
+          <label class="btn btn-secondary" style="flex:1; text-align:center;">
+            Cargar JSON
+            <input type="file" id="file-import" accept=".json" style="display:none;">
+          </label>
+        </div>
+        <button id="btn-sidebar-export-csv" class="btn btn-secondary" style="width: 100%; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <span>📊</span> Exportar Datos de Partida (CSV)
+        </button>
+        <button id="btn-toggle-history" class="btn btn-secondary" style="width: 100%; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <span>📜</span> Ver Historial & Estados Contables
+        </button>
+        <button id="btn-sidebar-restart" class="btn btn-secondary" style="width: 100%; margin-top: 8px; font-size: 0.82rem; color: var(--text-muted);">
+          🔄 Reiniciar Partida (Greenfield)
+        </button>
+      </div>
+    </aside>
+
+    <!-- Panel Central: Navegación Espacial 2.5D y Consolas Tácticas -->
+    <section>
+      <!-- Spatial 4-Quadrant Tactical Navigation Hub (RF-01, RF-02) -->
+      <nav class="spatial-navigation-bar card" id="spatial-nav-bar" aria-label="Navegación Espacial de Escenarios" style="display: flex; gap: 8px; margin-bottom: 16px; padding: 10px; background: var(--card-bg, #1e293b);">
+        <button id="nav-btn-oficina" class="btn btn-secondary spatial-nav-btn active" data-location="oficina" type="button" aria-selected="true" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <span>🏢</span> <strong>Oficina</strong>
+        </button>
+        <button id="nav-btn-produccion" class="btn btn-secondary spatial-nav-btn" data-location="produccion" type="button" aria-selected="false" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <span>🏭</span> <strong>Producción</strong>
+        </button>
+        <button id="nav-btn-mercado" class="btn btn-secondary spatial-nav-btn" data-location="mercado" type="button" aria-selected="false" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <span>🏪</span> <strong>Mercado</strong>
+        </button>
+        <button id="nav-btn-banco" class="btn btn-secondary spatial-nav-btn" data-location="banco" type="button" aria-selected="false" style="flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <span>🏦</span> <strong>Banco</strong>
+        </button>
+      </nav>
+
+      <!-- Escenario 1: Oficina Administrativa (Hub Central) (RF-02, RF-05, RF-06) -->
+      <div id="scene-oficina" class="spatial-scene scene-oficina" style="display: block;">
+        <div class="card scene-header-card" style="margin-bottom: 14px; border-left: 4px solid var(--accent, #10b981);">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <h2 style="margin: 0; font-size: 1.25rem;">🏢 Oficina Administrativa — Centro de Mando Táctico</h2>
+              <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-muted, #9ca3af);">
+                Monitoreo consolidado, balances sintéticos y orden ejecutiva de cierre semanal.
+              </p>
+            </div>
+            <div id="oficina-solvency-badge" class="badge badge-success" style="font-size: 0.85rem; padding: 6px 12px;">
+              ✅ Solvente
+            </div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+          <!-- 1. Estado de Situación & Racha (RF-05.1) -->
+          <div class="card" id="oficina-status-card">
+            <h3 class="card-title">📌 Estado de Situación & Racha</h3>
+            <div class="metric-row">
+              <span>Semana de Gestión:</span>
+              <strong id="oficina-week-display">Semana 1 de 120</strong>
+            </div>
+            <div class="metric-row">
+              <span>Racha Competitiva:</span>
+              <strong id="oficina-streak-display" class="val-positive">0 semanas invicto (Récord: 0)</strong>
+            </div>
+          </div>
+
+          <!-- 2. Balance General Sintético (RF-05.2) -->
+          <div class="card" id="oficina-balance-card">
+            <h3 class="card-title">⚖️ Balance General Sintético</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+              <div class="metric-row" style="flex-direction: column; align-items: flex-start;">
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Activos Totales:</span>
+                <strong id="oficina-assets-val">$0.00</strong>
+              </div>
+              <div class="metric-row" style="flex-direction: column; align-items: flex-start;">
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Pasivo Bancario:</span>
+                <strong id="oficina-debt-val" class="val-danger">$0.00</strong>
+              </div>
+              <div class="metric-row" style="flex-direction: column; align-items: flex-start;">
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Patrimonio Neto:</span>
+                <strong id="oficina-networth-val" class="val-positive">$0.00</strong>
+              </div>
+              <div class="metric-row" style="flex-direction: column; align-items: flex-start;">
+                <span style="font-size: 0.75rem; color: var(--text-muted);">EBITDA Proyectado:</span>
+                <strong id="oficina-ebitda-val">$0.00</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+          <!-- 3. Buzón Fitosanitario INTA (RF-05.3) -->
+          <div class="card" id="oficina-inta-card">
+            <h3 class="card-title">🌱 Buzón Fitosanitario & Agroclimático INTA</h3>
+            <div id="oficina-inta-alerts-container">
+              <!-- Rendered by sceneRenderer -->
+            </div>
+          </div>
+
+          <!-- 4. Consolidador de Órdenes Semanales (RF-05.4) -->
+          <div class="card" id="oficina-orders-consolidator">
+            <h3 class="card-title">📋 Consolidador de Decisiones Departamentales</h3>
+            <div id="oficina-orders-summary-container">
+              <!-- Rendered by sceneRenderer -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Botón Exclusivo de Cierre Centralizado (RF-06) -->
+        <div class="card" style="text-align: center; padding: 18px; background: rgba(16, 185, 129, 0.05); border: 1px solid var(--accent, #10b981);">
+          <p style="margin: 0 0 10px 0; font-size: 0.85rem; color: var(--text-muted);">
+            Al procesar el turno, se consolidarán las decisiones de Producción, Mercado y Banco y se liquidará la semana frente al competidor.
+          </p>
+          <button id="btn-execute-turn" class="btn btn-primary btn-execute-turn" type="button" style="font-size: 1rem; padding: 12px 28px; width: 100%; max-width: 480px;">
+            ⚡ Ejecutar y Procesar Turno Semanal
+          </button>
+        </div>
+      </div>
+
+      <!-- Escenario 2: Sector Productivo & Planta Fabril (RF-04, RF-07) -->
+      <div id="scene-produccion" class="spatial-scene scene-produccion" style="display: none;">
+        <div class="card scene-header-card" style="margin-bottom: 14px; border-left: 4px solid var(--accent, #10b981);">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <h2 style="margin: 0; font-size: 1.25rem;">🏭 Sector Productivo & Planta Fabril — Cadena de Transformación</h2>
+              <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-muted, #9ca3af);">
+                Gestión de chacra, vivero, sapecado, merma 3:1, estacionamiento y molienda IRAM 20550.
+              </p>
+            </div>
+            <span class="badge" style="font-size: 0.85rem; padding: 6px 12px; background: rgba(16, 185, 129, 0.15); color: var(--accent, #10b981);">
+              ⚙️ Operaciones
+            </span>
+          </div>
+        </div>
+
+        <!-- Alerta de Riesgo de Ardido / Recalentamiento (>95%) -->
+        <div id="prod-ardido-alert" class="card" style="display: none; margin-bottom: 14px; border-left: 4px solid var(--danger, #ef4444); background: rgba(239, 68, 68, 0.1);">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 24px;">🔥</span>
+            <div>
+              <strong style="color: var(--danger, #ef4444); font-size: 14px;">ALERTA CRÍTICA: Riesgo Inminente de Ardido en Planchada (&gt;95%)</strong>
+              <p style="margin: 2px 0 0 0; font-size: 12px; color: var(--text-color, #e5e7eb);">
+                La tolva del secadero está saturada. La hoja verde acumulada comenzará a fermentar y perder calidad organoléptica si no se sapeca de inmediato o se amplía la capacidad.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+          <!-- 1. Chacra y Vivero (RF-07.1) -->
+          <div class="card" id="prod-chacra-card">
+            <h3 class="card-title">🌱 1. Chacra & Vivero de Plantines</h3>
+            <div class="metric-row">
+              <span id="prod-nursery-cap-display">Capacidad vivero: 300 plantines</span>
+              <span class="badge" style="font-size: 10px;">Tope: 300 pl</span>
+            </div>
+            <div style="margin: 8px 0;">
+              <label for="prod-sow-seedlings" style="font-size: 0.82rem; color: var(--text-muted); display: block; margin-bottom: 4px;">
+                Siembra de Plantines (0 a 300 unidades):
+              </label>
+              <input type="number" id="prod-sow-seedlings" min="0" max="300" step="10" value="0" class="input-control" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
+            </div>
+
+            <div class="metric-row" style="margin-top: 10px;">
+              <span id="prod-hectares-display">Superficie plantada: 10.0 ha</span>
+            </div>
+            <div style="margin: 8px 0;">
+              <label for="prod-harvest-hectares" style="font-size: 0.82rem; color: var(--text-muted); display: block; margin-bottom: 4px;">
+                Cosecha de Hoja Verde (Hectáreas a tarefar):
+              </label>
+              <input type="number" id="prod-harvest-hectares" min="0" max="10" step="0.5" value="0" class="input-control" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
+            </div>
+
+            <div style="margin-top: 10px;">
+              <label for="prod-crew-type" style="font-size: 0.82rem; color: var(--text-muted); display: block; margin-bottom: 4px;">
+                Modalidad de Cuadrilla de Tarefa:
+              </label>
+              <select id="prod-crew-type" class="input-control" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
+                <option value="BPA_MECANIZADA">🛡️ Cuadrilla BPA Mecanizada ($45/kg - Cero sanción SRT)</option>
+                <option value="TRADICIONAL_MANUAL">⚠️ Cuadrilla Tradicional Manual ($30/kg - Riesgo laboral)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- 2. Secadero & Merma 3:1 (RF-07.2) -->
+          <div class="card" id="prod-secadero-card">
+            <h3 class="card-title">🔥 2. Secadero & Factor de Merma (3:1)</h3>
+            <div class="metric-row">
+              <span>Capacidad semanal de secado:</span>
+              <strong id="prod-dryer-cap-display">0 kg/sem</strong>
+            </div>
+            <div class="metric-row">
+              <span>Hoja en Planchada / Tolva:</span>
+              <strong id="prod-hopper-stock">0 kg</strong>
+            </div>
+
+            <div style="margin: 12px 0 6px 0;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 4px;">
+                <span>Nivel de Saturación de Tolva:</span>
+                <strong id="prod-hopper-pct">0%</strong>
+              </div>
+              <div style="width: 100%; height: 12px; background: rgba(255, 255, 255, 0.1); border-radius: 6px; overflow: hidden;">
+                <div id="prod-hopper-bar" style="width: 0%; height: 100%; background: var(--accent, #10b981); transition: width 0.3s ease;"></div>
+              </div>
+            </div>
+
+            <div style="margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border-color, #333);">
+              <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">
+                Inversión CapEx Secadero (+kg/sem a $150/kg, Lead time 2 sem):
+              </label>
+              <div style="display: flex; gap: 8px;">
+                <input type="number" id="prod-capex-dryer-input" min="0" step="500" value="0" class="input-control" style="flex: 1; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
+                <button id="prod-capex-dryer" class="btn btn-secondary" type="button" style="font-size: 0.8rem;">
+                  + CapEx Secadero
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+          <!-- 3. Estacionamiento (Noques vs Cámaras) (RF-07.3) -->
+          <div class="card" id="prod-aging-card">
+            <h3 class="card-title">📦 3. Estacionamiento de Canchada</h3>
+            <div class="metric-row">
+              <span>Capacidad de Almacenamiento:</span>
+              <strong id="prod-aging-cap-display">0 kg</strong>
+            </div>
+
+            <div style="margin: 10px 0;">
+              <label for="prod-aging-destination" style="font-size: 0.82rem; color: var(--text-muted); display: block; margin-bottom: 4px;">
+                Destino Tecnológico del Lote:
+              </label>
+              <select id="prod-aging-destination" class="input-control" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
+                <option value="ACCELERATED">⚡ Cámara Acelerada (4 semanas / Calidad 50 / Coef. 0.85)</option>
+                <option value="NATURAL">🌿 Noques Naturales (24 semanas / Calidad 100 / Coef. 1.00)</option>
+              </select>
+            </div>
+
+            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-color, #333);">
+              <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">
+                CapEx Estacionamiento (+kg espacio a $95/$40):
+              </label>
+              <div style="display: flex; gap: 8px;">
+                <input type="number" id="prod-capex-aging-input" min="0" step="1000" value="0" class="input-control" style="flex: 1; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
+                <button id="prod-capex-aging" class="btn btn-secondary" type="button" style="font-size: 0.8rem;">
+                  + CapEx Depósito
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Molienda y Empaque IRAM 20550 (RF-07.4) -->
+          <div class="card" id="prod-molienda-card">
+            <h3 class="card-title">⚙️ 4. Molienda & Tipificación IRAM 20550</h3>
+            <div class="metric-row">
+              <span>Capacidad semanal de molino:</span>
+              <strong id="prod-mill-cap-display">0 kg/sem</strong>
+            </div>
+
+            <div style="margin: 10px 0;">
+              <p style="margin: 0; font-size: 0.82rem; color: var(--text-muted);">
+                La canchada madura se transforma en Yerba Elaborada bajo especificaciones IRAM 20550 lista para góndola.
+              </p>
+            </div>
+
+            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-color, #333);">
+              <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">
+                Inversión CapEx Molino (+kg/sem a $200/kg):
+              </label>
+              <div style="display: flex; gap: 8px;">
+                <input type="number" id="prod-capex-mill-input" min="0" step="500" value="0" class="input-control" style="flex: 1; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
+                <button id="prod-capex-mill" class="btn btn-secondary" type="button" style="font-size: 0.8rem;">
+                  + CapEx Molino
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Barra de Guardado Local de Producción (RF-03, RF-04) -->
+        <div class="card" style="text-align: right; padding: 14px; background: rgba(255, 255, 255, 0.02); display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 0.85rem; color: var(--text-muted);">
+            * Se requiere saldo de caja positivo para validar las decisiones de siembra, cosecha y CapEx.
+          </span>
+          <button id="btn-save-produccion" class="btn btn-primary" type="button" style="font-size: 0.95rem; padding: 10px 24px;">
+            💾 Confirmar y Guardar Órdenes de Producción
+          </button>
+        </div>
+      </div>
+
+      <!-- Escenario 3: Mercado Mayorista & Comercial (RF-08) -->
+      <div id="scene-mercado" class="spatial-scene scene-mercado" style="display: none;">
+        <div class="card" style="margin-bottom: 14px; background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95)); border-left: 4px solid var(--accent, #10b981);">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <h2 style="margin: 0; font-size: 1.25rem; color: #fff;">🏪 Mercado Mayorista & Política Comercial</h2>
+              <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-muted);">
+                Aprovisionamiento spot de materia prima, logística de desvío (bypass) y fijación de precio en góndola frente a la competencia regional.
+              </p>
+            </div>
+            <span class="badge" style="background: rgba(16, 185, 129, 0.2); color: var(--accent, #10b981); border: 1px solid var(--accent, #10b981);">
+              ÁREA COMERCIAL
+            </span>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+          <!-- 1. Make or Buy Externo: Compras Spot y Bypass Logístico (RF-08.1) -->
+          <div class="card" id="merc-spot-card">
+            <h3 class="card-title">🛒 1. Abastecimiento Spot & Bypass Logístico</h3>
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: -4px; margin-bottom: 12px;">
+              Adquiere materia prima a terceros para complementar tu cosecha propia o sortear cuellos de botella térmicos.
+            </p>
+
+            <div style="margin-bottom: 12px;">
+              <div class="metric-row">
+                <span>Hoja Verde Spot a Colonos:</span>
+                <strong id="merc-leaf-price" class="val-primary">$250.00/kg</strong>
+              </div>
+              <label for="merc-buy-leaf" style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-top: 4px; margin-bottom: 4px;">
+                Comprar Hoja Verde (kg ingresan a tolva de secadero):
+              </label>
+              <input type="number" id="merc-buy-leaf" min="0" step="500" value="0" class="input-control" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
+            </div>
+
+            <div style="padding-top: 10px; border-top: 1px solid var(--border-color, #333); margin-bottom: 12px;">
+              <div class="metric-row">
+                <span>Yerba Canchada Mayorista:</span>
+                <strong id="merc-canchada-price" class="val-primary">$950.00/kg</strong>
+              </div>
+              <label for="merc-buy-canchada" style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-top: 4px; margin-bottom: 4px;">
+                Comprar Canchada Mayorista (kg directo a maduración):
+              </label>
+              <input type="number" id="merc-buy-canchada" min="0" step="500" value="0" class="input-control" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
+            </div>
+
+            <!-- Bypass Logístico Selector (RF-08.1) -->
+            <div style="padding: 10px; background: rgba(2, 132, 199, 0.1); border-left: 3px solid #0284c7; border-radius: 4px;">
+              <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; font-size: 0.82rem; color: #bae6fd;">
+                <input type="checkbox" id="merc-bypass-warehouse" checked style="margin-top: 3px; accent-color: #0284c7;">
+                <span>
+                  <strong>⚡ Circuito Bypass Logístico Activo:</strong> La canchada mayorista omite el sapecado y secado e ingresa directamente a estacionamiento sin saturar la tolva ni generar riesgo de ardido.
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 2. Pizarra y Radar Regional (RF-08.4) -->
+          <div class="card" id="merc-board-card">
+            <h3 class="card-title">📊 2. Pizarra de Mercado & Inteligencia Competitiva</h3>
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: -4px; margin-bottom: 12px;">
+              Monitoreo del volumen de demanda agregada del NEA y cotización de referencia del Bot rival.
+            </p>
+
+            <div class="metric-row">
+              <span>Demanda Regional Semanal Estimada:</span>
+              <strong id="merc-board-demand" class="val-positive">6.000 kg/sem</strong>
+            </div>
+            <div class="metric-row">
+              <span>Precio de Referencia del Rival (Bot):</span>
+              <strong id="merc-rival-price-display" class="val-warning">$3.200/kg</strong>
+            </div>
+
+            <div style="margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border-color, #333);">
+              <span style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 6px;">
+                Participación de Mercado (Semana Previa):
+              </span>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <div style="padding: 8px; background: rgba(255, 255, 255, 0.04); border-radius: 4px; text-align: center;">
+                  <span style="font-size: 0.72rem; color: var(--text-muted); display: block;">Tu Molino</span>
+                  <strong id="merc-share-player-display" style="font-size: 1rem; color: var(--accent, #10b981);">40.0%</strong>
+                </div>
+                <div style="padding: 8px; background: rgba(255, 255, 255, 0.04); border-radius: 4px; text-align: center;">
+                  <span style="font-size: 0.72rem; color: var(--text-muted); display: block;">Bot Rival</span>
+                  <strong id="merc-share-bot-display" style="font-size: 1rem; color: #f59e0b;">40.0%</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+          <!-- 3. Fijación de Precio Góndola (RF-08.2) -->
+          <div class="card" id="merc-pricing-card">
+            <h3 class="card-title">🏷️ 3. Política de Precios al Consumidor</h3>
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: -4px; margin-bottom: 12px;">
+              Fija el precio final de tu paquete de 1 kg bajo la banda regulada ($2.800 a $4.200 / kg).
+            </p>
+
+            <div class="metric-row">
+              <span>Precio Seleccionado para Góndola:</span>
+              <strong id="merc-price-display" style="font-size: 1.25rem; color: var(--accent, #10b981);">$3.200/kg</strong>
+            </div>
+
+            <div style="margin: 14px 0;">
+              <input type="range" id="merc-selling-price-slider" min="2800" max="4200" step="25" value="3200" style="width: 100%; accent-color: var(--accent, #10b981); cursor: pointer;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">
+                <span>$2.800 (Mínimo Banda)</span>
+                <span>$3.500</span>
+                <span>$4.200 (Máximo Banda)</span>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <label for="merc-selling-price-input" style="font-size: 0.8rem; color: var(--text-muted); white-space: nowrap;">
+                Ajuste exacto ($):
+              </label>
+              <input type="number" id="merc-selling-price-input" min="2800" max="4200" step="25" value="3200" class="input-control" style="flex: 1; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
+            </div>
+          </div>
+
+          <!-- 4. Retroalimentación de Elasticidad y Absorción (RF-08.3) -->
+          <div class="card" id="merc-elasticity-card">
+            <h3 class="card-title">🧮 4. Absorción Proyectada por Elasticidad Cruzada</h3>
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: -4px; margin-bottom: 12px;">
+              Cálculo síncrono del volumen demandado según tu diferencial de precio relativo al competidor.
+            </p>
+
+            <div class="metric-row">
+              <span>Diferencial de Precio vs Rival:</span>
+              <strong id="merc-elasticity-pct-display" class="val-positive">0.0% (Mismo Precio)</strong>
+            </div>
+
+            <div class="metric-row">
+              <span>Demanda Proyectada Absorbida:</span>
+              <strong id="merc-absorbed-demand-display" style="font-size: 1.15rem; color: var(--accent, #10b981);">6.000 kg/sem</strong>
+            </div>
+
+            <div style="margin-top: 10px; padding: 10px; background: rgba(255, 255, 255, 0.03); border-radius: 4px; font-size: 0.78rem; color: var(--text-muted); line-height: 1.4;">
+              💡 <em>Pedagogía Microeconómica:</em> Un precio inferior al bot estimula la captación de demanda por encima de la media regional, mientras que un precio superior eleva el margen unitario pero cede volumen de ventas al rival.
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Barra de Guardado Local de Mercado (RF-03, RF-04) -->
+        <div class="card" style="text-align: right; padding: 14px; background: rgba(255, 255, 255, 0.02); display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 0.85rem; color: var(--text-muted);">
+            * Las compras spot de hoja verde y canchada se debitan inmediatamente contra tu saldo de caja disponible.
+          </span>
+          <button id="btn-save-mercado" class="btn btn-primary" type="button" style="font-size: 0.95rem; padding: 10px 24px;">
+            💾 Confirmar y Guardar Órdenes de Mercado
+          </button>
+        </div>
+      </div>
+
+      <!-- Escenario 4: Entidad Financiera / Banco (RF-09) -->
+      <div id="scene-banco" class="spatial-scene scene-banco" style="display: none;">
+        <div class="card" style="margin-bottom: 14px; background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95)); border-left: 4px solid #3b82f6;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <h2 style="margin: 0; font-size: 1.25rem; color: #fff;">🏦 Entidad Financiera & Tesorería</h2>
+              <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-muted);">
+                Gestión de estructura de capital, financiamiento productivo, servicio de deuda y control riguroso del ratio de apalancamiento D/A.
+              </p>
+            </div>
+            <span class="badge" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid #3b82f6;">
+              ÁREA FINANCIERA
+            </span>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+          <!-- 1. Posición de Deuda & Condiciones Financieras (RF-09.1) -->
+          <div class="card" id="banco-status-card">
+            <h3 class="card-title">💳 1. Posición de Deuda & Condiciones</h3>
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: -4px; margin-bottom: 12px;">
+              Línea de crédito comercial para capital de trabajo y proyectos de inversión CapEx.
+            </p>
+
+            <div class="metric-row">
+              <span>Saldo Deudor Vigente:</span>
+              <strong id="banco-current-debt" class="val-danger">$0.00</strong>
+            </div>
+
+            <div class="metric-row">
+              <span>Tasa Efectiva Semanal:</span>
+              <strong id="banco-interest-rate" class="val-primary">0.7429% semanal</strong>
+            </div>
+
+            <div class="metric-row">
+              <span>Interés Semanal Proyectado:</span>
+              <strong id="banco-weekly-interest" class="val-warning">$0.00</strong>
+            </div>
+
+            <div class="metric-row">
+              <span>Activos Totales de Respaldo:</span>
+              <strong id="banco-total-assets">$0.00</strong>
+            </div>
+          </div>
+
+          <!-- 2. Semáforo Visual de Solvencia & Ratio D/A (RF-09.4) -->
+          <div class="card" id="banco-solvency-card">
+            <h3 class="card-title">🚦 2. Diagnóstico de Solvencia & Apalancamiento</h3>
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: -4px; margin-bottom: 12px;">
+              Tope legal máximo de endeudamiento permitido: 80% del valor total de tus activos.
+            </p>
+
+            <div class="metric-row" style="margin-bottom: 10px;">
+              <span>Ratio Deuda / Activos Proyectado (D/A):</span>
+              <strong id="banco-leverage-ratio-display" style="font-size: 1.2rem;">0.0%</strong>
+            </div>
+
+            <div style="margin-bottom: 12px; text-align: center;">
+              <span id="banco-solvency-semaphore" class="badge badge-success" style="font-size: 0.95rem; padding: 6px 16px; display: inline-block;">
+                ✅ Solvente / Bajo Riesgo (&lt;50%)
+              </span>
+            </div>
+
+            <div class="metric-row" style="padding-top: 10px; border-top: 1px solid var(--border-color, #333);">
+              <span>Tope Rígido de Crédito Adicional:</span>
+              <strong id="banco-max-credit-display" class="val-positive">$0.00</strong>
+            </div>
+
+            <div style="margin-top: 8px; font-size: 0.76rem; color: var(--text-muted); line-height: 1.3;">
+              * <em>Restricción Mecánica Infranqueable:</em> Si D/A supera 80%, la empresa entra en quiebra técnica inmediata en la liquidación semanal.
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Control Bilateral de Tesorería (RF-09.2, RF-09.3) -->
+        <div class="card" id="banco-operation-card" style="margin-bottom: 14px;">
+          <h3 class="card-title">🎛️ 3. Solicitud de Crédito (+) o Amortización Anticipada (-)</h3>
+          <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: -4px; margin-bottom: 14px;">
+            Desplaza el slider hacia la derecha para obtener liquidez inmediata o hacia la izquierda para cancelar deuda y ahorrar intereses semanales.
+          </p>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-size: 0.85rem; color: var(--text-muted);">Variación de Capital Solicitada:</span>
+            <strong id="banco-variation-display" style="font-size: 1.3rem; color: #60a5fa;">$0.00</strong>
+          </div>
+
+          <div style="margin: 12px 0;">
+            <input type="range" id="banco-credit-slider" min="0" max="0" step="10000" value="0" style="width: 100%; accent-color: #3b82f6; cursor: pointer;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">
+              <span>⬅️ Amortizar Deuda (-Deuda)</span>
+              <span>$0 (Sin cambio)</span>
+              <span>Solicitar Crédito (+Deuda) ➡️</span>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 12px; align-items: center; margin-top: 14px;">
+            <label for="banco-debt-variation-input" style="font-size: 0.82rem; color: var(--text-muted); white-space: nowrap;">
+              Ajuste Numérico Exacto ($):
+            </label>
+            <input type="number" id="banco-debt-variation-input" step="10000" value="0" class="input-control" style="flex: 1; padding: 8px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
+          </div>
+        </div>
+
+        <!-- 4. Barra de Guardado Local de Banco (RF-03, RF-04) -->
+        <div class="card" style="text-align: right; padding: 14px; background: rgba(255, 255, 255, 0.02); display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 0.85rem; color: var(--text-muted);">
+            * Para amortizar deuda se requiere saldo de caja positivo equivalente al monto cancelado.
+          </span>
+          <button id="btn-save-banco" class="btn btn-primary" type="button" style="font-size: 0.95rem; padding: 10px 24px; background: #2563eb; border-color: #1d4ed8;">
+            💾 Confirmar Operación Financiera
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal Guiado Secuencial de Tutorial Semana 1 (RF-10) -->
+      <div id="spatial-tutorial-modal" class="modal-overlay" style="display: none; position: fixed; z-index: 9999; inset: 0; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(4px); align-items: center; justify-content: center;">
+        <div class="modal-content" style="max-width: 540px; width: 90%; background: #1e293b; border: 1px solid #3b82f6; border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); padding: 20px; color: #fff;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 8px;">
+            <span id="tutorial-step-badge" class="badge" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid #3b82f6; font-size: 0.85rem;">
+              Inducción Semana 1 - Paso 1 de 5
+            </span>
+            <button id="btn-tutorial-skip" class="btn btn-secondary" type="button" style="font-size: 0.75rem; padding: 4px 10px;">
+              Saltar Inducción ⏭️
+            </button>
+          </div>
+          <div style="margin-bottom: 16px;">
+            <h3 id="tutorial-step-title" style="margin: 0 0 8px 0; font-size: 1.2rem; color: #fff;">
+              🏛️ 1. Oficina Administrativa
+            </h3>
+            <p id="tutorial-step-text" style="font-size: 0.9rem; line-height: 1.5; color: #cbd5e1; margin: 0;">
+              Bienvenido a YerbaMateSim. La Oficina Administrativa es tu centro neurálgico: aquí monitoreas la solvencia patrimonial, revisas las alertas agronómicas del INTA y ejecutas de manera exclusiva el cierre de turno semanal.
+            </p>
+          </div>
+          <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 12px;">
+            <button id="btn-tutorial-next" class="btn btn-primary" type="button" style="padding: 8px 18px; font-size: 0.9rem; background: #2563eb;">
+              Siguiente Escenario ➡️
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visualizador de Cadena de Valor (RF-12) -->
+      <div class="stages-container">
+        <div class="stage-card empty" id="stage-card-vivero">
+          <img id="img-vivero" src="assets/dioramas/diorama_vivero_empty.png" alt="Vivero" class="stage-diorama empty">
+          <div class="stage-name">
+            1. Vivero de Plantines
+            <button class="glossary-trigger-badge" data-glossary="vivero" type="button" title="Ver Vivero en Glosario" aria-label="Ver Vivero en Glosario">ℹ️</button>
+          </div>
+          <div class="stage-stat">Tope biológico: <strong>300 pl/ciclo</strong></div>
+        </div>
+
+        <div class="stage-card empty" id="stage-card-plantacion">
+          <img id="img-plantacion" src="assets/dioramas/diorama_plantacion_empty.png" alt="Plantación" class="stage-diorama empty">
+          <div class="stage-name">
+            2. Plantación & Yerbales
+            <button class="glossary-trigger-badge" data-glossary="hoja_verde" type="button" title="Ver Yerbales en Glosario" aria-label="Ver Yerbales en Glosario">ℹ️</button>
+          </div>
+          <div class="stage-stat">Maduración: <strong>Plurianual</strong></div>
+        </div>
+
+        <div class="stage-card idle" id="stage-card-secadero">
+          <img id="img-secadero" src="assets/dioramas/diorama_secadero_idle.png" alt="Secadero" class="stage-diorama idle">
+          <div class="stage-name">
+            3. Sapecado y Secadero
+            <button class="glossary-trigger-badge" data-glossary="sapecado" type="button" title="Ver Sapecado en Glosario" aria-label="Ver Sapecado en Glosario">ℹ️</button>
+          </div>
+          <div class="stage-stat">Capacidad Sapecado: <strong id="secadero-cap">0 kg/sem</strong></div>
+          <div class="stage-stat">Hoja Verde en Planchada: <strong id="secadero-stock">0 kg</strong></div>
+        </div>
+
+        <div class="stage-card idle" id="stage-card-estacionamiento">
+          <img id="img-estacionamiento" src="assets/dioramas/diorama_secadero_idle.png" alt="Estacionamiento" class="stage-diorama idle">
+          <div class="stage-name">
+            4. Estacionamiento (Noques / Cámaras)
+            <button class="glossary-trigger-badge" data-glossary="noques" type="button" title="Ver Noques y Cámaras en Glosario" aria-label="Ver Noques en Glosario">ℹ️</button>
+          </div>
+          <div class="stage-stat">Cámara Acelerada: <strong id="aging-cap">0 kg</strong></div>
+          <div class="stage-stat">En Maduración: <strong id="aging-current">0 kg</strong></div>
+          <div class="stage-stat">Canchada Lista p/Moler: <strong id="canchada-ready">0 kg</strong></div>
+        </div>
+
+        <div class="stage-card idle" id="stage-card-molienda">
+          <img id="img-molienda" src="assets/dioramas/diorama_molienda_idle.png" alt="Molienda" class="stage-diorama idle">
+          <div class="stage-name">
+            5. Molienda y Tipificación IRAM 20550
+            <button class="glossary-trigger-badge" data-glossary="iram20550" type="button" title="Ver Norma IRAM 20550 en Glosario" aria-label="Ver Norma IRAM 20550 en Glosario">ℹ️</button>
+          </div>
+          <div class="stage-stat">Capacidad Molienda: <strong id="mill-cap">0 kg/sem</strong></div>
+          <div class="stage-stat">Yerba Mate Elaborada: <strong id="packaged-stock">0 kg</strong></div>
+        </div>
+      </div>
+
+      <!-- Stepper Navigation Header (RF-08) -->
+      <div class="stepper-container card">
+        <div class="stepper-steps">
+          <div class="step-item active" id="step-nav-1" data-phase="1">
+            <div class="step-badge">1</div>
+            <div class="step-label">Fase 1: Abastecimiento & Tarefa</div>
+            <div class="step-status">En curso</div>
+          </div>
+          <div class="step-connector" id="connector-1-2"></div>
+          <div class="step-item locked" id="step-nav-2" data-phase="2">
+            <div class="step-badge">2</div>
+            <div class="step-label">Fase 2: CapEx & Capacidad Industrial</div>
+            <div class="step-status">Bloqueado</div>
+          </div>
+          <div class="step-connector" id="connector-2-3"></div>
+          <div class="step-item locked" id="step-nav-3" data-phase="3">
+            <div class="step-badge">3</div>
+            <div class="step-label">Fase 3: Política Comercial & Tesorería</div>
+            <div class="step-status">Bloqueado</div>
+          </div>
+          <div class="step-connector" id="connector-3-4"></div>
+          <div class="step-item locked" id="step-nav-4" data-phase="4">
+            <div class="step-badge">4</div>
+            <div class="step-label">Fase 4: Arena Versus & Cierre de Turno</div>
+            <div class="step-status">Bloqueado</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Domain Exception Pedagogical Banner (RF-19, T23) -->
+      <div id="domain-exception-banner" class="domain-exception-banner" style="display: none;">
+        <div class="domain-exception-content">
+          <span class="domain-exception-icon">⚠️</span>
+          <div class="domain-exception-body">
+            <strong id="domain-exception-title" class="domain-exception-title">Restricción de Regla de Negocio</strong>
+            <p id="domain-exception-msg" class="domain-exception-msg"></p>
+          </div>
+          <button id="domain-exception-close" class="domain-exception-close" aria-label="Cerrar aviso">&times;</button>
+        </div>
+      </div>
+
+      <!-- Fase 1: Abastecimiento & Tarefa (Make or Buy) -->
+      <div class="phase-panel card scope-phase-1" id="phase-panel-1">
+        <div class="phase-header">
+          <h2 class="card-title">🛒 Fase 1: Abastecimiento & Tarefa de Cosecha (Make or Buy)</h2>
+          <span class="phase-badge badge-p1">Decisión Irreversible</span>
+        </div>
+        <p class="phase-instruction">
+          Determina la estrategia de aprovisionamiento para la semana. Compara el costo unitario de tarefa propia vs precio spot en planchada y observa el bypass logístico a estacionamiento. Las decisiones confirmadas no podrán modificarse.
+        </p>
+
+        <!-- Make or Buy Visual Comparison Card (RF-05) -->
+        <div class="make-or-buy-container">
+          <div class="comparator-card">
+            <div class="comp-col">
+              <span class="comp-badge comp-make">
+                🚜 Tarefa Propia (Make)
+                <button class="glossary-trigger-badge" data-glossary="tarefa" type="button" title="Ver Tarefa en Glosario" aria-label="Ver Tarefa en Glosario">ℹ️</button>
+              </span>
+              <div class="comp-value" id="comp-cost-harvest">$145.00 <span class="unit">/kg</span></div>
+              <div class="comp-detail">Costo operativo directo de cuadrilla de tareferos</div>
+            </div>
+            <div class="comp-vs">VS</div>
+            <div class="comp-col">
+              <span class="comp-badge comp-buy">
+                🛒 Hoja Verde Spot (Buy)
+                <button class="glossary-trigger-badge" data-glossary="hoja_verde" type="button" title="Ver Hoja Verde en Glosario" aria-label="Ver Hoja Verde en Glosario">ℹ️</button>
+              </span>
+              <div class="comp-value" id="comp-cost-leaf">$0.00 <span class="unit">/kg</span></div>
+              <div class="comp-detail">Precio de mercado a colonos terceros en planchada</div>
+            </div>
+            <div class="comp-saving" id="comp-diff-tag">
+              Ahorro Make: <strong id="comp-diff-val">--</strong>
+            </div>
+          </div>
+
+          <!-- Logistics Bypass Schematic Diagram (RF-05) -->
+          <div class="bypass-diagram">
+            <div class="bypass-title">🔄 Diagrama de Flujo Logístico & Desvío (Bypass)</div>
+            <div class="bypass-flow">
+              <div class="flow-step">
+                <span class="flow-icon">🌿</span>
+                <span class="flow-name">Hoja Verde</span>
+                <span class="flow-desc">(Tarefa o Spot)</span>
+              </div>
+              <div class="flow-arrow flow-required">➔ [Sapecado y Secadero (3:1)] ➔</div>
+              <div class="flow-step">
+                <span class="flow-icon">📦</span>
+                <span class="flow-name">Estacionamiento</span>
+                <span class="flow-desc">(Noques / Cámaras)</span>
+              </div>
+            </div>
+            <div class="flow-bypass-line">
+              <span class="bypass-tag">⚡ BYPASS DIRECTO:</span> Compras de <strong>Yerba Mate Canchada Spot</strong> (<span id="comp-cost-canchada">$0.00/kg</span>) ingresan inmediatamente a Noques / Cámaras de estacionamiento <u>sin ocupar capacidad del secadero</u> <button class="glossary-trigger-badge" data-glossary="canchada" type="button" title="Ver Canchada en Glosario" aria-label="Ver Canchada en Glosario">ℹ️</button>.
+            </div>
+          </div>
+        </div>
+
+        <!-- Hopper Saturation Monitor (RF-08, T19) -->
+        <div class="hopper-monitor-card" id="hopper-container">
+          <div class="hopper-header">
+            <span class="hopper-title">
+              🔥 Saturación de Tolva / Planchada de Recepción de Secadero:
+              <button class="glossary-trigger-badge" data-glossary="ardido" type="button" title="Ver Riesgo de Ardido en Glosario" aria-label="Ver Riesgo de Ardido en Glosario">ℹ️</button>
+            </span>
+            <span class="hopper-badge badge-normal" id="hopper-status-badge">Normal (0%)</span>
+          </div>
+          <div class="hopper-bar-bg">
+            <div class="hopper-bar-fill fill-normal" id="hopper-bar-fill" style="width: 0%;"></div>
+          </div>
+          <div class="hopper-detail" id="hopper-detail-text">
+            Recepción semanal de hoja verde: <strong id="hopper-received-kg">0 kg</strong> / Capacidad: <strong id="hopper-capacity-kg">0 kg</strong>
+          </div>
+          <div class="hopper-warning-banner" id="hopper-warning-msg" style="display: none;">
+            ⚠️ ¡Alerta Crítica! La recepción física de hoja verde supera el 95% de capacidad de secado. Riesgo severo de fermentación anaeróbica y merma total por Ardido si supera la ventana crítica de 24h.
+          </div>
+        </div>
+
+        <div class="decisions-grid" style="margin-top: 20px;">
+          <div>
+            <h3 style="font-size:0.95rem; color:var(--accent-green); margin-bottom:10px;">🌾 Tarefa en Yerbales & Vivero</h3>
+
+            <!-- Selector de Cuadrilla de Tarefa (BPA Mecanizada vs Tradicional) (RF-03, RF-04, T14) -->
+            <div class="form-group" style="margin-bottom: 12px;">
+              <label class="form-label" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <span style="font-weight:600; font-size:0.85rem;">Modalidad de Cuadrilla de Tarefa:</span>
+                <button class="glossary-trigger-badge" data-glossary="tarefa" type="button" title="Ver Tarefa y CNTA en Glosario" aria-label="Ver Tarefa en Glosario">ℹ️</button>
+              </label>
+              <div class="crew-selector-group" role="radiogroup" aria-label="Modalidad de cuadrilla de tarefa">
+                <label class="crew-option-card selected" id="card-crew-bpa">
+                  <input type="radio" name="labor_crew_type" id="radio-crew-bpa" value="BPA_MECANIZADA" checked>
+                  <div class="crew-card-content">
+                    <div class="crew-card-header">
+                      <span class="crew-card-title">🚜 Mecanizada BPA</span>
+                      <span class="crew-badge badge-bpa">Res. CNTA 150/2016</span>
+                    </div>
+                    <div class="crew-card-rate">$145.00 <span class="unit">/kg HV</span></div>
+                    <div class="crew-card-desc">Carritos + guinche hidráulico. 0% riesgo de sanción SRT.</div>
+                  </div>
+                </label>
+                <label class="crew-option-card" id="card-crew-trad">
+                  <input type="radio" name="labor_crew_type" id="radio-crew-trad" value="TRADICIONAL_INFORMAL">
+                  <div class="crew-card-content">
+                    <div class="crew-card-header">
+                      <span class="crew-card-title">👥 Tradicional</span>
+                      <span class="crew-badge badge-trad">Riesgo SRT 15%</span>
+                    </div>
+                    <div class="crew-card-rate">$110.00 <span class="unit">/kg HV</span></div>
+                    <div class="crew-card-desc">Carga manual en ponchadas. Mayor fatiga y riesgo laboral.</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="input-harvest-hec">Hectáreas de yerbal a cosechar (ha):</label>
+              <input type="number" id="input-harvest-hec" class="form-control" placeholder="0.0" min="0" step="0.5" value="0">
+            </div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;" id="harvest-hec-note">
+              * Rendimiento canónico: ~1.5 kg HV/planta (8,500 kg/ha) | Costo tareferos: <strong id="label-crew-cost-note">$145.00/kg</strong>
+            </div>
+
+            <!-- Semillero / Vivero 300 plantines (RF-08, T19) -->
+            <div class="form-group" style="margin-top: 14px;">
+              <label for="input-sow-seedlings">
+                Siembra en Vivero de Plantines (macetas 500 ml):
+                <span class="cost-tag">Tope biológico: 300 u/ciclo</span>
+                <button class="glossary-trigger-badge" data-glossary="vivero" type="button" title="Ver Vivero en Glosario" aria-label="Ver Vivero en Glosario">ℹ️</button>
+              </label>
+              <input type="number" id="input-sow-seedlings" class="form-control" placeholder="0" min="0" max="300" step="10" value="0">
+              <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">
+                * Ocupación actual de vivero: <strong id="nursery-current-occupancy">0</strong> / 300 plantines
+              </div>
+            </div>
+          </div>
+          <div>
+            <h3 style="font-size:0.95rem; color:var(--accent-gold); margin-bottom:10px;">🛒 Compras Spot en Planchada</h3>
+            <div class="form-group">
+              <label for="input-buy-leaf">Hoja Verde Spot en planchada (kg):</label>
+              <input type="number" id="input-buy-leaf" class="form-control" placeholder="0" min="0" step="500" value="0">
+            </div>
+            <div class="form-group" style="margin-top:10px;">
+              <label for="input-buy-canchada">Yerba Mate Canchada Spot al contado (kg):</label>
+              <input type="number" id="input-buy-canchada" class="form-control" placeholder="0" min="0" step="500" value="0">
+            </div>
+          </div>
+        </div>
+        <div class="phase-actions">
+          <button id="btn-confirm-phase-1" class="btn btn-primary">
+            Confirmar Abastecimiento & Tarefa y Pasar a CapEx (Irreversible) 🔒
+          </button>
+        </div>
+      </div>
+
+      <!-- Fase 2: Capacidad Industrial & CapEx -->
+      <div class="phase-panel card scope-phase-2" id="phase-panel-2" style="display: none;">
+        <div class="phase-header">
+          <h2 class="card-title">🏗️ Fase 2: Capacidad Industrial y Decisiones CapEx</h2>
+          <span class="phase-badge badge-p2">Decisión Irreversible</span>
+        </div>
+        <p class="phase-instruction">
+          Modela la expansión industrial. Todo equipo adquirido requiere lead time de instalación de <strong>2 semanas</strong>. Mantén el balance de masa (Sapecado/Secado 3:1 ➔ Estacionamiento ➔ Molienda IRAM 20550) para evitar cuellos de botella y costos fijos ociosos.
+        </p>
+
+        <!-- Mass Balance & Utilization Dashboard (RF-06) -->
+        <div class="mass-balance-container">
+          <div class="balance-title">⚖️ Diagrama de Balance de Masa & Utilización Fabril</div>
+          <div class="balance-meters-grid">
+            <div class="meter-card" id="meter-card-dryer">
+              <div class="meter-header">
+                <span class="meter-label">
+                  1. Sapecado y Secadero (3:1)
+                  <button class="glossary-trigger-badge" data-glossary="sapecado" type="button" title="Ver Sapecado en Glosario" aria-label="Ver Sapecado en Glosario">ℹ️</button>
+                </span>
+                <span class="meter-badge" id="badge-dryer-ratio">Equilibrado</span>
+              </div>
+              <div class="meter-capacity">
+                <strong id="phase2-dryer-cap">0</strong> kg/sem
+              </div>
+              <div class="meter-progress-bg">
+                <div class="meter-progress-fill" id="meter-fill-dryer" style="width: 50%;"></div>
+              </div>
+              <div class="meter-detail">Capacidad instalada de sapecado + pedidos</div>
+            </div>
+
+            <div class="flow-connector-arrow">➔</div>
+
+            <div class="meter-card" id="meter-card-aging">
+              <div class="meter-header">
+                <span class="meter-label">
+                  2. Estacionamiento
+                  <button class="glossary-trigger-badge" data-glossary="noques" type="button" title="Ver Estacionamiento en Glosario" aria-label="Ver Estacionamiento en Glosario">ℹ️</button>
+                </span>
+                <span class="meter-badge" id="badge-aging-ratio">Cámaras / Noques</span>
+              </div>
+              <div class="meter-capacity">
+                <strong id="phase2-aging-cap">0</strong> kg
+              </div>
+              <div class="meter-progress-bg">
+                <div class="meter-progress-fill" id="meter-fill-aging" style="width: 50%;"></div>
+              </div>
+              <div class="meter-detail">Noques (24 sem) / Cámaras (4 sem)</div>
+            </div>
+
+            <div class="flow-connector-arrow">➔</div>
+
+            <div class="meter-card" id="meter-card-mill">
+              <div class="meter-header">
+                <span class="meter-label">
+                  3. Molienda & Tipificación IRAM 20550
+                  <button class="glossary-trigger-badge" data-glossary="iram20550" type="button" title="Ver Norma IRAM 20550 en Glosario" aria-label="Ver Norma IRAM 20550 en Glosario">ℹ️</button>
+                </span>
+                <span class="meter-badge" id="badge-mill-ratio">Despacho</span>
+              </div>
+              <div class="meter-capacity">
+                <strong id="phase2-mill-cap">0</strong> kg/sem
+              </div>
+              <div class="meter-progress-bg">
+                <div class="meter-progress-fill" id="meter-fill-mill" style="width: 50%;"></div>
+              </div>
+              <div class="meter-detail">Tope semanal de molienda y envasado</div>
+            </div>
+          </div>
+
+          <!-- Real-time Balance Diagnostics Banner -->
+          <div class="balance-diagnostic-banner banner-optimal" id="balance-diagnostic-banner">
+            <span class="diag-icon" id="diag-icon">✅</span>
+            <span id="diag-text">Relación de capacidades equilibrada (Secadero &le; 1.5 &times; Molienda).</span>
+          </div>
+        </div>
+
+        <!-- CapEx Investment Decisions Grid with Lead-Time (RF-06, RF-07, RF-08, T16) -->
+        <div class="decisions-grid" style="margin-top: 20px;">
+          <div>
+            <h3 style="font-size:0.95rem; color:var(--accent-gold); margin-bottom:10px;">⚙️ Sapecado, Secadero y Estacionamiento</h3>
+
+            <!-- Selector de Destino de Maduración (Noques vs Cámaras) (RF-07, RF-08, T16) -->
+            <div class="form-group" style="margin-bottom: 12px;">
+              <label class="form-label" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <span style="font-weight:600; font-size:0.85rem;">Destino de Maduración de Yerba Canchada:</span>
+                <button class="glossary-trigger-badge" data-glossary="noques" type="button" title="Ver Noques y Cámaras en Glosario" aria-label="Ver Noques en Glosario">ℹ️</button>
+              </label>
+              <div class="aging-selector-group" role="radiogroup" aria-label="Destino de maduración del lote canchado">
+                <label class="aging-option-card selected" id="card-aging-accel">
+                  <input type="radio" name="aging_destination" id="radio-aging-accel" value="ACCELERATED" checked>
+                  <div class="aging-card-content">
+                    <div class="aging-card-header">
+                      <span class="aging-card-title">⚡ Cámara Climatizada</span>
+                      <span class="aging-badge badge-accel">4 Semanas</span>
+                    </div>
+                    <div class="aging-card-quality">Calidad 50 <span class="unit">(Estándar)</span></div>
+                    <div class="aging-card-desc">Maduración acelerada (50-60°C). 85% precio base. Rotación rápida de capital.</div>
+                  </div>
+                </label>
+                <label class="aging-option-card" id="card-aging-natural">
+                  <input type="radio" name="aging_destination" id="radio-aging-natural" value="NATURAL">
+                  <div class="aging-card-content">
+                    <div class="aging-card-header">
+                      <span class="aging-card-title">🍃 Noques Naturales</span>
+                      <span class="aging-badge badge-natural">24 Semanas</span>
+                    </div>
+                    <div class="aging-card-quality">Calidad 100 <span class="unit">(Premium INTA)</span></div>
+                    <div class="aging-card-desc">Maduración natural en madera. 100% precio base IRAM 20550. Máximo aroma y color.</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="input-buy-dryer">
+                Secadero Barbacuá (+kg/sem):
+                <span class="cost-tag">$150.00/kg | Lead Time: 2 sem</span>
+              </label>
+              <input type="number" id="input-buy-dryer" class="form-control" placeholder="0" min="0" step="500" value="0">
+              <div class="input-subcost">Desembolso: <span id="subcost-dryer">$0.00</span></div>
+            </div>
+            <div class="form-group" style="margin-top:14px;">
+              <label for="input-buy-aging">
+                Cámara Climatizada Acelerada (+kg):
+                <span class="cost-tag">$95.00/kg | Lead Time: 2 sem</span>
+                <button class="glossary-trigger-badge" data-glossary="camaras" type="button" title="Ver Cámaras en Glosario" aria-label="Ver Cámaras en Glosario">ℹ️</button>
+              </label>
+              <input type="number" id="input-buy-aging" class="form-control" placeholder="0" min="0" step="500" value="0">
+              <div class="input-subcost">Desembolso: <span id="subcost-aging">$0.00</span></div>
+            </div>
+          </div>
+          <div>
+            <h3 style="font-size:0.95rem; color:var(--accent-gold); margin-bottom:10px;">⚙️ Molienda y Tipificación IRAM 20550</h3>
+
+            <!-- Tarjeta y Badge de Tipificación IRAM 20550 (RF-07, RF-08, T16) -->
+            <div class="iram-typification-card" id="card-iram-typification" style="margin-bottom: 12px;">
+              <div class="iram-badge-container">
+                <span class="iram-badge-pill" id="badge-iram-norm">Norma IRAM 20550</span>
+                <span class="iram-quality-tag" id="label-iram-quality">Calidad Organoléptica: 50/100 (Estándar)</span>
+              </div>
+              <div class="iram-typification-text" id="text-iram-typification">
+                Línea de envasado configurada para Yerba Mate Elaborada con Palo (Cámara Acelerada — Descuento Comercial 15%).
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="input-buy-mill">
+                Línea de Molienda IRAM (+kg/sem):
+                <span class="cost-tag">$200.00/kg | Lead Time: 2 sem</span>
+                <button class="glossary-trigger-badge" data-glossary="iram20550" type="button" title="Ver Molienda IRAM en Glosario" aria-label="Ver Molienda IRAM en Glosario">ℹ️</button>
+              </label>
+              <input type="number" id="input-buy-mill" class="form-control" placeholder="0" min="0" step="250" value="0">
+              <div class="input-subcost">Desembolso: <span id="subcost-mill">$0.00</span></div>
+            </div>
+            <div class="total-capex-box">
+              <span class="capex-box-label">Inversión CapEx Total Fase 2:</span>
+              <span class="capex-box-val" id="total-capex-val">$0.00</span>
+            </div>
+          </div>
+        </div>
+        <div class="phase-actions">
+          <button id="btn-confirm-phase-2" class="btn btn-primary">
+            Confirmar Inversiones y Pasar a Comercialización (Irreversible) 🔒
+          </button>
+        </div>
+      </div>
+
+      <!-- Fase 3: Política Comercial & Tesorería -->
+      <div class="phase-panel card scope-phase-3" id="phase-panel-3" style="display: none;">
+        <div class="phase-header">
+          <h2 class="card-title">💰 Fase 3: Política Comercial & Tesorería</h2>
+          <span class="phase-badge badge-p3">Cierre de Turno</span>
+        </div>
+        <p class="phase-instruction">
+          Fija el precio minorista bajo incertidumbre de absorción, analiza la inteligencia retrospectiva del Bot rival y gestiona el crédito o desendeudamiento bancario bajo tope rígido de apalancamiento.
+        </p>
+
+        <!-- Market & Competitor Retrospective Intel (RF-07) -->
+        <div class="intel-grid">
+          <!-- Bot Retrospective Card -->
+          <div class="intel-card">
+            <div class="intel-title">🤖 Inteligencia Competitiva: AgroYerba del Norte (Semana Anterior)</div>
+            <div class="intel-stats-row">
+              <div class="intel-stat">
+                <span class="intel-lbl">Precio Bot Semana Pasada:</span>
+                <span class="intel-val" id="intel-bot-price">$3,350.00</span>
+              </div>
+              <div class="intel-stat">
+                <span class="intel-lbl">Cuota de Mercado Bot:</span>
+                <span class="intel-val" id="intel-bot-share">40.0%</span>
+              </div>
+              <div class="intel-stat">
+                <span class="intel-lbl">Tu Cuota Anterior:</span>
+                <span class="intel-val val-positive" id="intel-player-share">40.0%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Demand Uncertainty Bandwidth Card (RF-07) -->
+          <div class="intel-card">
+            <div class="intel-title">📊 Proyección de Absorción con Incertidumbre (&plusmn;15%)</div>
+            <div class="bandwidth-visual">
+              <div class="bandwidth-labels">
+                <span>Mín. Esperada: <strong id="band-demand-min">0 kg</strong></span>
+                <span>Base Central: <strong id="band-demand-mid">0 kg</strong></span>
+                <span>Máx. Posible: <strong id="band-demand-max">0 kg</strong></span>
+              </div>
+              <div class="bandwidth-bar-bg">
+                <div class="bandwidth-bar-fill" id="band-demand-fill"></div>
+              </div>
+              <div class="bandwidth-detail">
+                Rango de precio regulado: <strong>$2,800.00</strong> a <strong>$4,200.00</strong> /kg. La absorción real dependerá de la elasticidad y del precio que fije el Bot rival.
+              </div>
+              <div class="absorption-estimate-box" id="absorption-estimate-box" style="margin-top: 10px; font-size: 0.82rem; color: var(--text-secondary); background: var(--bg-input); padding: 8px 12px; border-radius: 6px; border-left: 3px solid var(--accent-green);">
+                📈 Absorción Elástica Estimada: <strong id="elastic-absorption-val" style="color: var(--accent-green); font-family: monospace;">0 kg</strong>
+                <span id="elastic-absorption-detail" style="font-size: 0.72rem; color: var(--text-muted); display: block;">(Calculada dinámicamente según tu precio frente al competidor)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Commercial Pricing & Bilateral Treasury Controls -->
+        <div class="decisions-grid" style="margin-top: 20px;">
+          <!-- Pricing Control -->
+          <div>
+            <h3 style="font-size:0.95rem; color:var(--accent-green); margin-bottom:10px;">
+              🏷️ Fijación de Precio (Yerba Mate Elaborada con Palo IRAM 20550)
+              <button class="glossary-trigger-badge" data-glossary="iram20550" type="button" title="Ver IRAM 20550 en Glosario" aria-label="Ver IRAM 20550 en Glosario">ℹ️</button>
+            </h3>
+            <div class="form-group">
+              <label for="input-selling-price">
+                Precio Unitario ($/kg) [Banda $2,800 - $4,200]:
+              </label>
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="range" id="slider-selling-price" min="2800" max="4200" step="10" value="3200" style="flex: 1;">
+                <input type="number" id="input-selling-price" class="form-control" style="width: 120px; font-weight: 700;" placeholder="3200" min="2800" max="4200" step="25" value="3200">
+              </div>
+            </div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:8px;">
+              * Precios altos mejoran margen pero ceden cuota de mercado si el rival ofrece un valor menor.
+            </div>
+          </div>
+
+          <!-- Bilateral Treasury Control with Rigid Debt Cap (RF-07) -->
+          <div>
+            <h3 style="font-size:0.95rem; color:var(--accent-gold); margin-bottom:10px;">
+              🏦 Tesorería & Endeudamiento Bancario
+              <button class="glossary-trigger-badge" data-glossary="apalancamiento" type="button" title="Ver Apalancamiento en Glosario" aria-label="Ver Apalancamiento en Glosario">ℹ️</button>
+            </h3>
+            <div class="form-group">
+              <label for="input-debt-request">
+                Variación de Deuda: <strong id="label-debt-mode" style="color: var(--text-primary);">Neutral ($0.00)</strong>
+              </label>
+              <!-- Bilateral Slider: Negative = Amortization, Positive = Borrowing up to Rigid Cap -->
+              <input type="range" id="slider-debt-request" class="treasury-slider" min="-1000000" max="1000000" step="10000" value="0">
+              <div class="slider-limits">
+                <span id="slider-min-lbl">Amortizar: -$0</span>
+                <span class="slider-zero">Neutro ($0)</span>
+                <span id="slider-max-lbl">Tope Rígido: +$0</span>
+              </div>
+              <input type="number" id="input-debt-request" class="form-control" style="margin-top: 8px;" placeholder="0" step="10000" value="0">
+            </div>
+            <div class="rigid-cap-banner" id="rigid-cap-banner">
+              🛡️ Tope Rígido de Deuda: <strong id="rigid-cap-display">$0.00</strong> (Apalancamiento no puede exceder 80%).
+            </div>
+          </div>
+        </div>
+        <div class="phase-actions">
+          <button id="btn-confirm-phase-3" class="btn btn-primary">
+            Confirmar y Pasar a Arena Versus (Irreversible) ➔
+          </button>
+        </div>
+      </div>
+
+      <!-- Fase 4: Versus Arena (Arena de Confrontación & Cierre de Turno) (RF-11, T23) -->
+      <div class="phase-panel card scope-phase-4" id="phase-panel-4" style="display: none;">
+        <div class="phase-header">
+          <h2 class="card-title">⚔️ Fase 4: Arena Versus & Cierre de Turno</h2>
+          <span class="phase-badge badge-p4" id="versus-round-badge">Balance Comparativo Semanal</span>
+        </div>
+        <p class="phase-instruction">
+          Pantalla partida de confrontación estratégica contra AgroYerba del Norte (Bot Rival). Analiza el balance competitivo en cuota de mercado, margen operativo, costo promedio de hoja verde / canchada y liquidez antes de confirmar el cierre y ejecutar el turno de simulación.
+        </p>
+
+        <!-- Competitive Streak Badge (RF-11) -->
+        <div class="versus-streak-banner" id="versus-streak-banner">
+          <div class="streak-icon" id="versus-streak-icon">🔥</div>
+          <div class="streak-info">
+            <span class="streak-title" id="versus-streak-title">Racha Competitiva: 0 victorias</span>
+            <span class="streak-desc" id="versus-streak-desc">Punto de Inflexión Favorable</span>
+          </div>
+        </div>
+
+        <!-- Split Screen Arena Comparison (RF-11, T23) -->
+        <div class="arena-split-screen versus-split-screen">
+          <!-- Columna Jugador -->
+          <div class="split-col split-col-player card">
+            <div class="split-col-header">
+              <span class="split-entity-badge badge-player">🌿 Tu Empresa</span>
+              <h3 class="split-entity-name" id="arena-player-name">Yerba Guaraní</h3>
+            </div>
+            
+            <div class="split-metrics-grid">
+              <!-- Cuota y Volumen -->
+              <div class="split-metric-row">
+                <span class="split-metric-lbl">🥧 Cuota Estimada de Mercado:</span>
+                <strong class="split-metric-val val-positive" id="arena-share-player">40.0%</strong>
+              </div>
+              <div class="share-bar-bg">
+                <div class="share-bar-fill fill-player" id="arena-bar-player" style="width: 40%;"></div>
+              </div>
+              <div class="split-metric-sub" id="arena-vol-player">Colocación Proyectada: 0 kg</div>
+
+              <div class="split-metric-divider"></div>
+
+              <!-- Margen Operativo y Costo Materia Prima -->
+              <div class="split-metric-row">
+                <span class="split-metric-lbl">📊 Margen Operativo Estimado:</span>
+                <strong class="split-metric-val val-positive" id="arena-margin-player">0.0%</strong>
+              </div>
+              <div class="split-metric-sub">
+                Costo Promedio Hoja Verde / Canchada: <strong id="arena-rawcost-player">$0.00 /kg</strong>
+              </div>
+
+              <div class="split-metric-divider"></div>
+
+              <!-- Posición de Caja y Apalancamiento -->
+              <div class="split-metric-row">
+                <span class="split-metric-lbl">💰 Caja Final Proyectada:</span>
+                <strong class="split-metric-val" id="arena-cash-player">$0.00</strong>
+              </div>
+              <div class="split-metric-sub">
+                Ratio D/A Proyectado: <strong id="arena-debt-player">0.0%</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Separador Central VS -->
+          <div class="split-vs-badge-container">
+            <span class="split-vs-badge">VS</span>
+          </div>
+
+          <!-- Columna Bot Rival -->
+          <div class="split-col split-col-bot card">
+            <div class="split-col-header">
+              <span class="split-entity-badge badge-bot">🤖 AgroYerba del Norte</span>
+              <h3 class="split-entity-name">Competidor Rival</h3>
+            </div>
+
+            <div class="split-metrics-grid">
+              <!-- Cuota y Volumen -->
+              <div class="split-metric-row">
+                <span class="split-metric-lbl">🥧 Cuota Esperada de Mercado:</span>
+                <strong class="split-metric-val val-warning" id="arena-share-bot">40.0%</strong>
+              </div>
+              <div class="share-bar-bg">
+                <div class="share-bar-fill fill-bot" id="arena-bar-bot" style="width: 40%;"></div>
+              </div>
+              <div class="split-metric-sub" id="arena-vol-bot">Colocación Estimada: 0 kg</div>
+
+              <div class="split-metric-divider"></div>
+
+              <!-- Margen Operativo y Costo Materia Prima -->
+              <div class="split-metric-row">
+                <span class="split-metric-lbl">📊 Margen Operativo Estimado:</span>
+                <strong class="split-metric-val val-warning" id="arena-margin-bot">0.0%</strong>
+              </div>
+              <div class="split-metric-sub">
+                Costo Estimado Hoja Verde / Canchada: <strong id="arena-rawcost-bot">$0.00 /kg</strong>
+              </div>
+
+              <div class="split-metric-divider"></div>
+
+              <!-- Posición de Caja y Apalancamiento -->
+              <div class="split-metric-row">
+                <span class="split-metric-lbl">💰 Caja Estimada Rival:</span>
+                <strong class="split-metric-val" id="arena-cash-bot">$0.00</strong>
+              </div>
+              <div class="split-metric-sub">
+                Ratio D/A Rival: <strong id="arena-debt-bot">0.0%</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bot Strategic Telemetry Narrative (RF-11) -->
+        <div class="versus-telemetry-box" id="versus-telemetry-card">
+          <div class="telemetry-header">
+            <span class="telemetry-icon">🤖</span>
+            <span class="telemetry-title">Telemetría Táctica del Bot Rival</span>
+            <span class="telemetry-status-tag" id="versus-bot-status-tag">Operativo</span>
+          </div>
+          <p class="telemetry-narrative" id="versus-bot-narrative">
+            AgroYerba del Norte mantuvo su precio a $3,350 priorizando rotación de volumen frente a la competencia.
+          </p>
+        </div>
+
+        <!-- Final Verdict / Game Over Banner (RF-13, RF-15) -->
+        <div id="versus-verdict-banner" class="versus-verdict-box" style="display: none; margin-top: 16px;">
+          <div class="verdict-icon" id="versus-verdict-icon">🏆</div>
+          <div class="verdict-body">
+            <h3 class="verdict-title" id="versus-verdict-title">Partida Concluida</h3>
+            <p class="verdict-desc" id="versus-verdict-desc"></p>
+          </div>
+        </div>
+
+        <!-- Botón de Ejecución de Turno (RF-11, T23) -->
+        <div class="phase-actions" style="margin-top: 24px; display: flex; flex-direction: column; align-items: center; gap: 12px;">
+          <button id="btn-execute-turn" class="btn btn-primary btn-execute-turn" style="font-size: 1.15rem; padding: 16px 40px; font-weight: 700; box-shadow: 0 4px 16px rgba(46, 125, 50, 0.4);">
+            ⚡ Ejecutar / Procesar Turno
+          </button>
+          <button id="btn-advance-week" style="display: none;">Continuar a Semana <span id="versus-next-week-num">2</span> ➔</button>
+          <div id="versus-gameover-actions" style="display: none; gap: 12px; justify-content: center; width: 100%;">
+            <button id="btn-versus-export" class="btn btn-primary">📥 Descargar Auditoría Académica (JSON)</button>
+            <button id="btn-versus-restart" class="btn btn-secondary">🔄 Reiniciar Partida (Greenfield)</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Panel Derecho: Monitor Contextual del Mercado y Rival (RF-01, RF-13) -->
+    <aside class="sidebar-contextual">
+      <!-- Pizarra Spot y Mercado Local (RF-01, RF-13) -->
+      <div class="card" id="spot-board">
+        <h2 class="card-title">📊 Pizarra Spot & Mercado</h2>
+        <div class="metric-row">
+          <span>Hoja Verde Spot (kg):</span>
+          <span id="side-spot-leaf" class="metric-val">$0.00</span>
+        </div>
+        <div class="metric-row">
+          <span>Yerba Canchada Spot (kg):</span>
+          <span id="side-spot-canchada" class="metric-val">$0.00</span>
+        </div>
+        <div class="metric-row">
+          <span>Yerba Elaborada IRAM 20550:</span>
+          <span id="side-spot-final" class="metric-val val-warning">$0.00</span>
+        </div>
+        <div class="metric-row">
+          <span>Demanda Global:</span>
+          <span id="side-spot-demand" class="metric-val">0 kg</span>
+        </div>
+        <div id="side-spot-empty-state" class="empty-state" style="display: none; font-size: 0.76rem; color: var(--text-muted); margin-top: 8px; border-top: 1px dashed var(--border-color); padding-top: 6px;">
+          ℹ️ Pizarra referencial de apertura (Semana 1). La dispersión histórica se computará tras el primer turno.
+        </div>
+      </div>
+
+      <!-- Radar de Inteligencia Rival (RF-01, RF-13) -->
+      <div class="card" id="rival-radar">
+        <h2 class="card-title">🤖 Radar Rival (Competidor)</h2>
+        <div class="metric-row">
+          <span>Estado Operativo:</span>
+          <span id="b-status" class="metric-val val-positive">Operando</span>
+        </div>
+        <div class="metric-row">
+          <span>Patrimonio Neto:</span>
+          <span id="b-networth" class="metric-val val-warning">$0.00</span>
+        </div>
+        <div class="metric-row">
+          <span>Efectivo:</span>
+          <span id="b-cash" class="metric-val">$0.00</span>
+        </div>
+        <div class="metric-row">
+          <span>Deuda Bancaria:</span>
+          <span id="b-debt" class="metric-val val-danger">$0.00</span>
+        </div>
+        <div class="metric-row">
+          <span>Capacidad Sapecado/Secado:</span>
+          <span id="b-dryer" class="metric-val">0 kg/sem</span>
+        </div>
+        <div class="metric-row">
+          <span>Capacidad Molienda IRAM:</span>
+          <span id="b-mill" class="metric-val">0 kg/sem</span>
+        </div>
+        <div id="rival-empty-state" class="empty-state" style="font-size: 0.76rem; color: var(--text-muted); margin-top: 10px; border-top: 1px dashed var(--border-color); padding-top: 6px;">
+          ⏳ <em>Semana 1: Telemetría de arranque. Los indicadores de cuota y EBITDA rival se actualizarán al procesar el turno.</em>
+        </div>
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- Student Identification Modal (RF-01) -->
+  <div id="student-modal" class="modal-overlay" style="display: flex;">
+    <div class="modal-content student-modal-box">
+      <div class="modal-icon">🌱</div>
+      <h2 style="font-size: 1.6rem; color: var(--accent-green); margin-bottom: 8px;">YerbaMateSim: Consola Gerencial</h2>
+      <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.95rem;">
+        Bienvenido al simulador agroindustrial de yerba mate. Para comenzar la simulación de 120 semanas y registrar tu evaluación académica, ingresa tus datos:
+      </p>
+      <form id="form-student" onsubmit="event.preventDefault();">
+        <div class="form-group">
+          <label for="input-student-name">Nombre y Apellido *</label>
+          <input type="text" id="input-student-name" class="form-control" placeholder="Ej. Lucía Benítez" required autocomplete="name">
+          <div id="error-student-name" class="field-error" style="display: none;">El nombre es obligatorio</div>
+        </div>
+        <div class="form-group" style="margin-top: 14px;">
+          <label for="input-student-id">Número de Legajo / Matrícula *</label>
+          <input type="text" id="input-student-id" class="form-control" placeholder="Ej. LEG-89421" required autocomplete="off">
+          <div id="error-student-id" class="field-error" style="display: none;">El legajo es obligatorio</div>
+        </div>
+        <button type="submit" id="btn-start-simulation" class="btn btn-primary" style="margin-top: 24px;">
+          Iniciar Simulación (Semana 1) 🚀
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Guided Interactive Tutorial Tour Modal (RF-13, T24) -->
+  <div id="tutorial-modal" class="modal-overlay tutorial-overlay" style="display: none;">
+    <div class="modal-content tutorial-content-box">
+      <div class="tutorial-header">
+        <div class="tutorial-header-left">
+          <span class="tutorial-step-badge" id="tutorial-step-badge">Paso 1 de 5</span>
+          <h3 class="tutorial-title" id="tutorial-title">1. Cabecera de KPIs de Supervivencia</h3>
+        </div>
+        <button id="btn-tutorial-skip-top" class="tutorial-skip-link" type="button" title="Omitir Tutorial">Omitir (Skip) ✕</button>
+      </div>
+      <div class="tutorial-body">
+        <div class="tutorial-target-highlight" id="tutorial-target-highlight">
+          <span class="tutorial-icon" id="tutorial-icon">📊</span>
+          <p id="tutorial-text" class="tutorial-description">
+            Monitorea en tiempo real tu posición de caja, endeudamiento bancario y el ratio crítico D/A. Superar el 80% de apalancamiento provoca la quiebra inmediata de tu empresa.
+          </p>
+        </div>
+      </div>
+      <div class="tutorial-footer">
+        <button id="btn-tutorial-skip" class="btn btn-secondary btn-tutorial-skip" type="button">
+          Omitir Tutorial (Skip)
+        </button>
+        <div class="tutorial-nav-buttons">
+          <button id="btn-tutorial-prev" class="btn btn-secondary btn-tutorial-prev" type="button" disabled>
+            ◀ Anterior
+          </button>
+          <button id="btn-tutorial-next" class="btn btn-primary btn-tutorial-next" type="button">
+            Siguiente ▶
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottleneck Pedagogical Warning Modal (RF-10) -->
+  <div id="bottleneck-modal" class="modal-overlay">
+    <div class="modal-content warning-modal-box">
+      <div class="modal-icon" style="color: var(--accent-gold);">⚠️</div>
+      <h2 style="font-size: 1.5rem; color: var(--accent-gold); margin-bottom: 10px;">Advertencia Pedagógica: Desbalance Operativo</h2>
+      <p id="bottleneck-modal-desc" style="color: var(--text-primary); margin-bottom: 16px; font-size: 0.95rem; line-height: 1.5;">
+        Se ha detectado un cuello de botella severo: la capacidad de secado supera en más del 50% la capacidad de molienda.
+      </p>
+      <div class="pedagogical-tip">
+        <strong>💡 Consejo de Gestión BSS:</strong> La hoja verde procesada que no pueda molerse quedará inmovilizada en inventario de canchada o saturará el estacionamiento, devengando costos fijos y costo financiero de capital inmovilizado.
+      </div>
+      <div class="modal-actions-row" style="margin-top: 20px; display: flex; gap: 12px;">
+        <button id="btn-bottleneck-adjust" class="btn btn-secondary" style="flex: 1;">
+          ✏️ Ajustar CapEx
+        </button>
+        <button id="btn-bottleneck-proceed" class="btn btn-primary" style="flex: 1; background: var(--accent-gold); color: #0b140e;">
+          Aceptar Riesgo y Continuar ➔
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Liquidity Risk Warning Modal (RF-09) -->
+  <div id="liquidity-modal" class="modal-overlay">
+    <div class="modal-content liquidity-modal-box">
+      <div class="modal-icon" style="color: var(--accent-danger);">🚨</div>
+      <h2 style="font-size: 1.5rem; color: var(--accent-danger); margin-bottom: 10px;">Advertencia Crítica: Tensión de Liquidez</h2>
+      <p id="liquidity-modal-desc" style="color: var(--text-primary); margin-bottom: 16px; font-size: 0.95rem; line-height: 1.5;">
+        El costo acumulado de tus decisiones excede la caja disponible más el margen de crédito prudencial. Incurres en riesgo inminente de cesación de pagos al cierre de la semana.
+      </p>
+      <div class="liquidity-risk-kpis">
+        <div>Caja Proyectada: <strong id="modal-risk-cash" style="color: var(--accent-danger);">$0.00</strong></div>
+        <div>Apalancamiento Proyectado: <strong id="modal-risk-ratio" style="color: var(--accent-danger);">0.0%</strong> (Tope quiebra: 80.0%)</div>
+      </div>
+      <div class="pedagogical-tip" style="border-left-color: var(--accent-danger); background: rgba(231, 76, 60, 0.1); margin-top: 10px;">
+        <strong>💡 Advertencia BSS:</strong> Si no ajustas el volumen de compras o financias el déficit, tu ratio de deuda/activos superará el 80% y el banco ejecutará la quiebra judicial de la empresa.
+      </div>
+      <div class="modal-actions-row" style="margin-top: 20px; display: flex; gap: 12px;">
+        <button id="btn-liquidity-adjust" class="btn btn-secondary" style="flex: 1;">
+          ✏️ Ajustar Decisiones
+        </button>
+        <button id="btn-liquidity-proceed" class="btn btn-primary" style="flex: 1; background: var(--accent-danger); color: #fff;">
+          ⚠️ Confirmar Riesgo y Continuar ➔
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Over Modal (RF-13, RF-15) -->
+  <div id="gameover-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content gameover-modal-box">
+      <div id="gameover-modal-icon" class="modal-icon" style="font-size: 2.8rem;">🏆</div>
+      <h2 id="modal-title" style="font-size: 1.8rem; margin-bottom: 12px;">Fin de la Simulación</h2>
+      <div id="gameover-badge" class="gameover-status-badge" style="display: none;"></div>
+      <p id="modal-desc" style="color: var(--text-secondary); margin-bottom: 20px; font-size: 1rem; line-height: 1.5;"></p>
+      
+      <div class="gameover-stats-grid" id="gameover-stats-grid">
+        <div class="gameover-stat-card">
+          <span class="stat-lbl">Patrimonio Jugador:</span>
+          <strong id="modal-player-nw" class="stat-val">$0.00</strong>
+        </div>
+        <div class="gameover-stat-card">
+          <span class="stat-lbl">Patrimonio Bot:</span>
+          <strong id="modal-bot-nw" class="stat-val">$0.00</strong>
+        </div>
+        <div class="gameover-stat-card">
+          <span class="stat-lbl">Caja Final Jugador:</span>
+          <strong id="modal-player-cash" class="stat-val">$0.00</strong>
+        </div>
+        <div class="gameover-stat-card">
+          <span class="stat-lbl">Racha Máxima:</span>
+          <strong id="modal-max-streak" class="stat-val">0 victorias</strong>
+        </div>
+      </div>
+
+      <!-- Tablero Cuantitativo de 4 Dimensiones para Debriefing Docente (RF-12, T18) -->
+      <div class="debriefing-grid" id="debriefing-dashboard" style="margin-top: 18px; margin-bottom: 18px;">
+        <!-- Dimensión 1: Salud Financiera & Solvencia -->
+        <div class="debriefing-card" id="card-debrief-financial">
+          <div class="debriefing-card-header">
+            <span class="debriefing-icon">💳</span>
+            <span class="debriefing-title">1. Salud Financiera & Solvencia</span>
+          </div>
+          <div class="debriefing-metrics-list">
+            <div class="debriefing-metric-row">
+              <span class="d-metric-lbl">Patrimonio Neto Final:</span>
+              <strong class="d-metric-val" id="debrief-nw">$0.00</strong>
+            </div>
+            <div class="debriefing-metric-row">
+              <span class="d-metric-lbl">Caja Final Disponible:</span>
+              <strong class="d-metric-val" id="debrief-cash">$0.00</strong>
+            </div>
+            <div class="debriefing-metric-row">
+              <span class="d-metric-lbl">Retorno sobre Inversión (ROI):</span>
+              <strong class="d-metric-val" id="debrief-roi">0.0%</strong>
+            </div>
+            <div class="debriefing-metric-row">
+              <span class="d-metric-lbl">Apalancamiento Final (D/A):</span>
+              <strong class="d-metric-val" id="debrief-debt-ratio">0.0%</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dimensión 2: Eficiencia Operativa & Cadena Productiva -->
+        <div class="debriefing-card" id="card-debrief-operations">
+          <div class="debriefing-card-header">
+            <span class="debriefing-icon">⚙️</span>
+            <span class="debriefing-title">2. Eficiencia Operativa</span>
+          </div>
+          <div class="debriefing-metrics-list">
+            <div class="debriefing-metric-row">
+              <span class="d-metric-lbl">Hoja Verde Procesada:</span>
+              <strong class="d-metric-val" id="debrief-leaf-processed">0 kg</strong>
+            </div>
+            <div class="debriefing-metric-row">
+              <span class="d-metric-lbl">Yerba Canchada Obtenida:</span>
+              <strong class="d-metric-val" id="debrief-canchada-yield">0 kg</strong>
+            </div>
+            <div class="debriefing-metric-row">
+              <span class="d-metric-lbl">Pérdida por Ardido Acumulada:</span>
+              <strong class="d-metric-val" id="debrief-ardido-loss">0 kg</strong>
+            </div>
+            <div class="debriefing-metric-row">
+              <span class="d-metric-lbl">Utilización Promedio Secadero:</span>
+              <strong class="d-metric-val" id="debrief-dryer-util">0.0%</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dimensión 3: Inteligencia Comercial & Mercado -->
+        <div class="debriefing-card" id="card-debrief-commercial">
+          <div class="debriefing-card-header">
+            <span class="debriefing-icon">📈</span>
+            <span class="debriefing-title">3. Inteligencia Comercial</span>
+          </div>
+          <div class="debriefing-metrics-list">
+            <div class="debriefing-metric-row">
+              <span class="d-metric-lbl">Volumen Colocado / Vendido:</span>
+              <strong class="d-metric-val" id="debrief-volume-sold">0 kg</strong>
+            </div>
+            <div class="debriefing-metric-row">
+              <span class="d-metric-lbl">Facturación Bruta Acumulada:</span>
+              <strong class="d-metric-val" id="debrief-revenue-total">$0.00</strong>
+            </div>
+            <div class="debriefing-metric-row">
+              <span class="d-metric-lbl">Cuota de Mercado Promedio:</span>
+              <strong class="d-metric-val" id="debrief-market-share-avg">0.0%</strong>
+            </div>
+            <div class="debriefing-metric-row">
+              <span class="d-metric-lbl">Racha Máxima vs Bot:</span>
+              <strong class="d-metric-val" id="debrief-max-streak">0 semanas</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dimensión 4: Gestión de Seguridad, Sostenibilidad & BPA -->
+        <div class="debriefing-card" id="card-debrief-bpa">
+          <div class="debriefing-card-header">
+            <span class="debriefing-icon">🌱</span>
+            <span class="debriefing-title">4. Seguridad, Sostenibilidad & BPA</span>
+          </div>
+          <div class="debriefing-metrics-list">
+            <div class="debriefing-metric-row">
+              <span class="d-metric-lbl">Sistematización de Terrazas:</span>
+              <strong class="d-metric-val val-positive" id="debrief-bpa-terraces">Activa (100%)</strong>
+            </div>
+            <div class="debriefing-metric-row">
+              <span class="d-metric-lbl">Labranza Cero (L0):</span>
+              <strong class="d-metric-val val-positive" id="debrief-bpa-tillage">Activa (100%)</strong>
+            </div>
+            <div class="debriefing-metric-row">
+              <span class="d-metric-lbl">Modalidad de Cuadrilla Tarefa:</span>
+              <strong class="d-metric-val" id="debrief-crew-mode">BPA Mecanizada (Res. CNTA 150/16)</strong>
+            </div>
+            <div class="debriefing-metric-row">
+              <span class="d-metric-lbl">Sanciones SRT Incurridas:</span>
+              <strong class="d-metric-val val-positive" id="debrief-srt-fines">$0.00 (0 incidentes)</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Forensic Bankruptcy Diagnosis (RF-14) -->
+      <div id="bankruptcy-diagnosis" class="bankruptcy-diagnosis-panel" style="display: none;">
+        <div class="diagnosis-header">
+          <span class="diagnosis-icon">🔬</span>
+          <div class="diagnosis-title-group">
+            <h4 class="diagnosis-title">Informe Forense: Causas Determinantes de Quiebra</h4>
+            <span class="diagnosis-subtitle">Auditoría pericial de insolvencia técnica y riesgo de apalancamiento</span>
+          </div>
+        </div>
+        <ul id="bankruptcy-causes-list" class="diagnosis-causes-list">
+          <!-- Dynamically populated forensic causes -->
+        </ul>
+      </div>
+
+      <div class="modal-actions-row" style="margin-top: 24px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+        <button id="btn-gameover-export-csv" class="btn btn-secondary" style="flex: 1; min-width: 200px;">
+          📊 Exportar Datos de Partida (CSV)
+        </button>
+        <button id="btn-gameover-export" class="btn btn-primary" style="flex: 1; min-width: 200px;">
+          📥 Descargar Auditoría Académica (JSON)
+        </button>
+        <button id="btn-restart" class="btn btn-secondary" style="flex: 1; min-width: 200px;">
+          🔄 Iniciar Nueva Partida (Greenfield)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- History & Financial Statements Drawer Modal (RF-04, HU-06) -->
+  <div id="history-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content history-modal-box">
+      <div class="history-modal-header">
+        <div class="history-title-group">
+          <span class="history-icon">📜</span>
+          <div>
+            <h2 class="history-title">Auditoría Histórica y Estados Contables (RF-04)</h2>
+            <span class="history-subtitle">Evolución patrimonial y operativa semana a semana sin interrumpir la fase activa</span>
+          </div>
+        </div>
+        <button id="btn-close-history" class="btn-close-modal" aria-label="Cerrar modal">&times;</button>
+      </div>
+
+      <div class="history-summary-strip" id="history-summary-strip">
+        <div class="history-summary-item">
+          <span class="sum-lbl">Semanas Jugadas:</span>
+          <strong id="history-total-weeks" class="sum-val">0</strong>
+        </div>
+        <div class="history-summary-item">
+          <span class="sum-lbl">Racha Máxima:</span>
+          <strong id="history-max-streak" class="sum-val val-positive">0</strong>
+        </div>
+        <div class="history-summary-item">
+          <span class="sum-lbl">Patrimonio Jugador:</span>
+          <strong id="history-player-nw" class="sum-val val-positive">$0.00</strong>
+        </div>
+        <div class="history-summary-item">
+          <span class="sum-lbl">Patrimonio Bot:</span>
+          <strong id="history-bot-nw" class="sum-val val-warning">$0.00</strong>
+        </div>
+      </div>
+
+      <div class="history-table-container">
+        <table class="history-table" id="history-table">
+          <thead>
+            <tr>
+              <th>Sem</th>
+              <th>PN Jugador</th>
+              <th>EBITDA Jugador</th>
+              <th>Cuota Jugador</th>
+              <th>Caja Jugador</th>
+              <th>PN Bot</th>
+              <th>EBITDA Bot</th>
+              <th>Cuota Bot</th>
+              <th>Caja Bot</th>
+              <th>Veredicto</th>
+            </tr>
+          </thead>
+          <tbody id="history-table-body">
+            <!-- Dynamically populated rows -->
+          </tbody>
+        </table>
+        <div id="history-empty-state" class="history-empty-msg" style="display: none;">
+          🌱 Aún no se ha cerrado ninguna semana. Completa las Fases 1 a 3 para registrar el primer turno histórico.
+        </div>
+      </div>
+
+      <div class="history-modal-footer" style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button id="btn-history-export-csv" class="btn btn-secondary" style="font-size: 0.9rem;">
+          📊 Exportar Historial (CSV)
+        </button>
+        <button id="btn-history-export-json" class="btn btn-primary" style="font-size: 0.9rem;">
+          📥 Descargar Auditoría Completa (JSON)
+        </button>
+        <button id="btn-history-close-btn" class="btn btn-secondary" style="font-size: 0.9rem;">
+          Cerrar Auditoría
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Guide & Business Rules Modal (RF-04) -->
+  <div id="guide-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content guide-modal-box">
+      <div class="modal-header">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="font-size: 1.8rem;">📖</span>
+          <div>
+            <h2 style="font-size: 1.35rem; color: var(--accent-green); margin:0;">Guía de Juego & Reglas del Negocio</h2>
+            <span style="font-size: 0.8rem; color: var(--text-secondary);">Manual Operativo, Estándar Agroindustrial y Mecánicas de Quiebra</span>
+          </div>
+        </div>
+        <button id="btn-close-guide" class="btn-close-modal" type="button" aria-label="Cerrar Guía">&times;</button>
+      </div>
+
+      <div class="guide-content-scroll">
+        <section class="guide-section">
+          <h3>🌱 1. Estructura de la Cadena de Valor y Merma 3:1</h3>
+          <p>
+            La elaboración de yerba mate se compone de 5 eslabones secuenciales:
+          </p>
+          <ul>
+            <li><strong>Vivero:</strong> Capacidad biológica limitada a <strong>300 plantines</strong> por ciclo de siembra.</li>
+            <li><strong>Plantación (Chacra):</strong> Maduración plurianual. Rendimiento promedio: <strong>8.500 kg/ha</strong>. Costo operativo de cosecha y flete: <strong>$145/kg</strong>.</li>
+            <li><strong>Secadero Barbacuá:</strong> Aplica una relación física ineludible de <strong>3:1</strong> (se requieren <strong>3 kg de hoja verde</strong> para obtener <strong>1 kg de yerba canchada</strong>). Costo operativo: <strong>$25/kg</strong>.</li>
+            <li><strong>Estacionamiento:</strong>
+              <ul>
+                <li><em>Natural:</em> 24 semanas (calidad 100%, factor 1.0x). Costo CapEx: $40/kg.</li>
+                <li><em>Acelerado:</em> 4 semanas en cámara controlada (calidad 50%, factor 0.85x). Costo CapEx: $95/kg.</li>
+              </ul>
+            </li>
+            <li><strong>Molienda y Envasado:</strong> Fraccionamiento en paquetes de 1 kg. Costo operativo: <strong>$35/kg</strong>.</li>
+          </ul>
+        </section>
+
+        <section class="guide-section">
+          <h3>💰 2. Costos Fijos, Tasa Financiera y Quiebra Técnica</h3>
+          <ul>
+            <li><strong>Costos Fijos de Estructura:</strong> <strong>$40.000 por semana</strong> (devengamiento incondicional).</li>
+            <li><strong>Tasa de Interés Activa:</strong> <strong>TNA 39.00% / TEA 46.78%</strong> (aprox. <strong>0.743% semanal</strong>).</li>
+            <li><strong>Regla de Quiebra Técnica (Game Over):</strong> Ocurre de forma irreversible si el ratio de apalancamiento supera el 80% (<strong>D/A &gt; 0.80</strong>) o si el saldo de caja queda impago sin margen crediticio.</li>
+          </ul>
+        </section>
+
+        <section class="guide-section">
+          <h3>⚙️ 3. Toma de Decisiones y Stepper Irreversible</h3>
+          <p>
+            Cada semana operativa se resuelve a través de 4 fases secuenciales:
+          </p>
+          <ol>
+            <li><strong>Fase 01 (Abastecimiento):</strong> Cosecha propia, compra spot de hoja verde y compra mayorista de canchada.</li>
+            <li><strong>Fase 02 (CapEx e Inversión):</strong> Ampliación de secadero, cámaras y molino con <em>lead time</em> de instalación de 2 semanas.</li>
+            <li><strong>Fase 03 (Comercialización y Tesorería):</strong> Fijación de precio ($2.800 - $4.200) y solicitud/amortización bilateral de deuda.</li>
+            <li><strong>Fase 04 (Arena de Confrontación):</strong> Comparación estratégica vs. Bot rival y cierre semanal de turno.</li>
+          </ol>
+          <p style="font-size:0.82rem; color:var(--text-muted); margin-top:6px;">
+            <em>* Nota de supervivencia: La consulta de esta guía no altera ni modifica los borradores ni el turno en curso.</em>
+          </p>
+        </section>
+      </div>
+
+      <div class="modal-footer" style="padding-top: 14px; border-top: 1px solid var(--border-color); display:flex; justify-content:flex-end;">
+        <button id="btn-guide-understood" class="btn btn-primary" type="button">
+          Entendido, volver a la simulación ➔
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sanitary & Agroclimatic Event Pedagogical Modal (RF-11, T17) -->
+  <div id="sanitary-event-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content sanitary-modal-box">
+      <div class="sanitary-modal-header">
+        <div class="sanitary-title-group">
+          <span class="sanitary-icon" id="sanitary-modal-icon">🐛</span>
+          <div>
+            <span class="sanitary-category-badge" id="sanitary-modal-category">ALERTA FITOSANITARIA</span>
+            <h2 class="sanitary-title" id="sanitary-modal-title">Brote de Rulo de la Yerba Mate (Gyropsylla spegazziniana)</h2>
+          </div>
+        </div>
+        <button id="btn-close-sanitary-modal" class="btn-close-modal" type="button" aria-label="Cerrar modal">&times;</button>
+      </div>
+
+      <div class="sanitary-modal-body">
+        <!-- Biological Description -->
+        <div class="sanitary-desc-box">
+          <p id="sanitary-modal-desc" class="sanitary-desc-text">
+            El monitoreo en parcelas detectó una densidad poblacional superior al Umbral de Daño Económico (>120 individuos/20 golpes). Afecta brotación tierna.
+          </p>
+        </div>
+
+        <!-- UDE & Technical Diagnosis -->
+        <div class="sanitary-diag-grid">
+          <div class="sanitary-diag-card">
+            <span class="diag-card-lbl">🎯 Umbral de Daño Económico (UDE):</span>
+            <span class="diag-card-val" id="sanitary-modal-ude">>120 individuos / 20 golpes de red o >30% brotes tiernos con agallas</span>
+          </div>
+          <div class="sanitary-diag-card">
+            <span class="diag-card-lbl">📉 Impacto en Rendimiento de Hoja Verde:</span>
+            <span class="diag-card-val val-danger" id="sanitary-modal-yield">-10.0% (-5.0% con BPA)</span>
+          </div>
+        </div>
+
+        <!-- BPA Mitigation Rule Applied -->
+        <div class="sanitary-bpa-box" id="sanitary-modal-bpa-box">
+          <div class="bpa-box-header">
+            <span class="bpa-box-icon" id="sanitary-bpa-icon">🛡️</span>
+            <strong id="sanitary-bpa-status-title">Atenuación por Buenas Prácticas Agrícolas (BPA) Activa</strong>
+          </div>
+          <p class="bpa-box-text" id="sanitary-modal-bpa-rule">
+            BPA: Atenuación del 50% en pérdidas foliares por presencia de cubiertas verdes y fauna benéfica.
+          </p>
+        </div>
+
+        <!-- Scientific Source Badge -->
+        <div class="sanitary-source-row">
+          <span class="sanitary-source-lbl">📚 Fuente Científica INTA:</span>
+          <span class="sanitary-source-val" id="sanitary-modal-source">Manual de Producción de Yerba Mate INTA - Cap. Sanidad Vegetal</span>
+        </div>
+      </div>
+
+      <div class="modal-footer sanitary-modal-footer" style="padding-top: 14px; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end;">
+        <button id="btn-sanitary-understood" class="btn btn-primary" type="button" style="width: 100%;">
+          Comprendido, aplicar medidas agronómicas ➔
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Unsaved Changes Spatial Navigation Warning Modal (RF-03, T04) -->
+  <div id="unsaved-changes-modal" class="modal-overlay" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="unsaved-modal-title">
+    <div class="modal-content unsaved-modal-box">
+      <div class="unsaved-modal-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color, #333); padding-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 22px;">⚠️</span>
+          <div>
+            <span class="badge" style="background: var(--warning-bg, #b45309); color: #fff; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px;">ADVERTENCIA DE NAVEGACIÓN</span>
+            <h2 class="unsaved-title" id="unsaved-modal-title" style="margin: 4px 0 0 0; font-size: 16px;">Modificaciones sin Confirmar</h2>
+          </div>
+        </div>
+        <button id="btn-unsaved-close" class="btn-close-modal" type="button" aria-label="Cerrar advertencia">&times;</button>
+      </div>
+
+      <div class="modal-body" style="padding: 16px 0;">
+        <p class="unsaved-modal-text" id="unsaved-modal-msg" style="margin: 0; font-size: 14px; line-height: 1.5; color: var(--text-color, #e5e7eb);">
+          Has modificado parámetros en este escenario sin guardarlos explícitamente. Si cambias de área sin confirmar, se perderán las decisiones no guardadas.
+        </p>
+      </div>
+
+      <div class="modal-footer unsaved-modal-footer" style="padding-top: 14px; border-top: 1px solid var(--border-color, #333); display: flex; justify-content: flex-end; gap: 10px;">
+        <button id="btn-unsaved-cancel" class="btn btn-secondary" type="button">
+          Permanecer en el Área
+        </button>
+        <button id="btn-unsaved-discard" class="btn btn-danger" type="button">
+          Descartar Cambios
+        </button>
+        <button id="btn-unsaved-save" class="btn btn-primary" type="button">
+          Confirmar y Guardar ➔
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sticky Bottom Marginal Impact Projection Bar (RF-03, RF-09, RNF-03) -->
+  <footer id="bottom-projection-bar" class="bottom-sticky-bar">
+    <div class="bottom-bar-header">
+      <span class="bar-title-icon">📊</span>
+      <div class="bar-title-group">
+        <span class="bar-title">Impacto Marginal Proyectado</span>
+        <span class="bar-subtitle">Cierre de Semana en Tiempo Real (&lt;10ms)</span>
+      </div>
+    </div>
+    <div class="bottom-bar-kpis">
+      <div class="bar-kpi">
+        <span class="bar-kpi-lbl">Flujo Neto Semanal:</span>
+        <span class="bar-kpi-val" id="proj-cash-flow">$0.00</span>
+      </div>
+      <div class="bar-kpi">
+        <span class="bar-kpi-lbl">Caja Proyectada:</span>
+        <span class="bar-kpi-val" id="proj-closing-cash">$0.00</span>
+      </div>
+      <div class="bar-kpi">
+        <span class="bar-kpi-lbl">Apalancamiento (D/A):</span>
+        <span class="bar-kpi-val" id="proj-debt-ratio">0.0%</span>
+      </div>
+    </div>
+    <div class="bottom-bar-status">
+      <span id="proj-status-badge" class="proj-badge badge-solvent">✅ Solvente</span>
+    </div>
+    <div class="bottom-bar-action">
+      <button id="btn-bottom-confirm-phase" class="btn btn-primary btn-bottom-action" type="button">
+        Confirmar Fase 1 ➔
+      </button>
+    </div>
+  </footer>
+
+  <!-- Interactive Glossary & Good Practices Drawer (RF-02, T13) -->
+  <div id="glossary-drawer-overlay" class="glossary-drawer-overlay">
+    <aside id="glossary-drawer" class="glossary-drawer" aria-label="Glosario Pedagógico y Manual de Buenas Prácticas">
+      <div class="glossary-drawer-header">
+        <div class="glossary-header-top">
+          <h3 class="glossary-header-title">
+            <span>📚</span>
+            <span>Manual INTA & Glosario</span>
+          </h3>
+          <button id="btn-close-glossary-drawer" class="glossary-header-close" type="button" aria-label="Cerrar Glosario">&times;</button>
+        </div>
+        <div class="glossary-search-box">
+          <span class="glossary-search-icon">🔍</span>
+          <input type="search" id="glossary-search-input" placeholder="Buscar concepto, fórmula o norma..." autocomplete="off">
+        </div>
+        <div class="glossary-categories-strip" id="glossary-categories-container">
+          <!-- Populated dynamically by glossary.js -->
+        </div>
+      </div>
+      <div class="glossary-terms-scroll" id="glossary-terms-list">
+        <!-- Populated dynamically by glossary.js -->
+      </div>
+    </aside>
+  </div>
+
+  <script src="js/state.js"></script>
+  <script src="js/projections.js"></script>
+  <script src="js/stepper.js"></script>
+  <script src="js/tutorial.js"></script>
+  <script src="js/dioramas.js"></script>
+  <script src="js/glossary.js"></script>
+  <script type="module" src="js/main.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
