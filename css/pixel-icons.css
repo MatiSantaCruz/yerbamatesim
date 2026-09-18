@@ -1,0 +1,47 @@
+/* YerbaMateSim - Native Retro 16-bit Pixel Art Icons (PNG Assets) */
+.pixel-icon {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    vertical-align: -5px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+.pixel-icon-lg {
+    width: 38px;
+    height: 38px;
+    vertical-align: -7px;
+}
+.icon-banco { background-image: url("../assets/icons/icon_banco.png"); }
+.icon-book { background-image: url("../assets/icons/icon_book.png"); }
+.icon-bot { background-image: url("../assets/icons/icon_bot.png"); }
+.icon-briefcase { background-image: url("../assets/icons/icon_briefcase.png"); }
+.icon-chart { background-image: url("../assets/icons/icon_chart.png"); }
+.icon-check { background-image: url("../assets/icons/icon_check.png"); }
+.icon-clipboard { background-image: url("../assets/icons/icon_clipboard.png"); }
+.icon-dryer { background-image: url("../assets/icons/icon_dryer.png"); }
+.icon-guide { background-image: url("../assets/icons/icon_guide.png"); }
+.icon-history { background-image: url("../assets/icons/icon_history.png"); }
+.icon-info { background-image: url("../assets/icons/icon_info.png"); }
+.icon-lightning { background-image: url("../assets/icons/icon_lightning.png"); }
+.icon-mate { background-image: url("../assets/icons/icon_mate.png"); }
+.icon-mercado { background-image: url("../assets/icons/icon_mercado.png"); }
+.icon-mill { background-image: url("../assets/icons/icon_mill.png"); }
+.icon-moon { background-image: url("../assets/icons/icon_moon.png"); }
+.icon-nursery { background-image: url("../assets/icons/icon_nursery.png"); }
+.icon-oficina { background-image: url("../assets/icons/icon_oficina.png"); }
+.icon-package { background-image: url("../assets/icons/icon_package.png"); }
+.icon-produccion { background-image: url("../assets/icons/icon_produccion.png"); }
+.icon-restart { background-image: url("../assets/icons/icon_restart.png"); }
+.icon-save { background-image: url("../assets/icons/icon_save.png"); }
+.icon-scale { background-image: url("../assets/icons/icon_scale.png"); }
+.icon-student { background-image: url("../assets/icons/icon_student.png"); }
+.icon-sun { background-image: url("../assets/icons/icon_sun.png"); }
+.icon-tag { background-image: url("../assets/icons/icon_tag.png"); }
+.icon-tractor { background-image: url("../assets/icons/icon_tractor.png"); }
+.icon-traffic-light { background-image: url("../assets/icons/icon_traffic_light.png"); }
+.icon-warning { background-image: url("../assets/icons/icon_warning.png"); }

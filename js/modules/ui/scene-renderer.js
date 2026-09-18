@@ -699,8 +699,14 @@ export class SceneRenderer {
     const inputEl = document.getElementById("banco-debt-variation-input");
     const sliderEl = document.getElementById("banco-credit-slider");
 
-    const rawVal = inputEl && inputEl.value !== "" ? parseFloat(inputEl.value) : (sliderEl ? parseFloat(sliderEl.value) : 0);
-    const val = isNaN(rawVal) ? 0 : rawVal;
+    let val = 0;
+    if (inputEl && inputEl.value !== "" && !isNaN(parseFloat(inputEl.value)) && parseFloat(inputEl.value) !== 0) {
+      val = parseFloat(inputEl.value);
+    } else if (sliderEl && sliderEl.value !== "" && !isNaN(parseFloat(sliderEl.value))) {
+      val = parseFloat(sliderEl.value);
+    } else if (inputEl && inputEl.value !== "" && !isNaN(parseFloat(inputEl.value))) {
+      val = parseFloat(inputEl.value);
+    }
 
     return {
       debt_variation_ars: val
@@ -727,50 +733,163 @@ export class SceneRenderer {
   bindUI(stateProvider, spatialNavigator = null) {
     if (typeof document === "undefined") return;
 
-    const btnExecute = document.getElementById("btn-execute-turn");
-    if (btnExecute) {
-      btnExecute.addEventListener("click", () => {
-        const state = typeof stateProvider === "function" ? stateProvider() : (stateProvider || (typeof window !== "undefined" ? window.gameState : null));
+    const getState = () => typeof stateProvider === "function" ? stateProvider() : (stateProvider || (typeof window !== "undefined" ? window.gameState : null));
+    const getNav = () => spatialNavigator || (typeof window !== "undefined" ? (window.YerbaMateSimModules?.spatial?.spatialNavigator || window.spatialNavigator) : null);
+
+    const btnExecutes = document.querySelectorAll(".btn-execute-turn, #btn-execute-turn, #btn-oficina-execute");
+    btnExecutes.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const state = getState();
         this.executeTurnFromOficina(state);
       });
-    }
+    });
 
+    const triggerProjections = () => {
+      const state = getState();
+      if (typeof window !== "undefined" && window.updateBottomBarProjections) {
+        window.updateBottomBarProjections();
+      }
+      if (state && typeof this.renderOficina === "function") {
+        this.renderOficina(state);
+      }
+    };
+
+    // Producción Save Button
     const btnSaveProd = document.getElementById("btn-save-produccion");
     if (btnSaveProd) {
       btnSaveProd.addEventListener("click", () => {
-        const state = typeof stateProvider === "function" ? stateProvider() : (stateProvider || (typeof window !== "undefined" ? window.gameState : null));
-        const nav = spatialNavigator || (typeof window !== "undefined" ? window.spatialNavigator : null);
-        this.saveProduccionFromDOM(state, nav);
+        const state = getState();
+        const nav = getNav();
+        const success = this.saveProduccionFromDOM(state, nav);
+        if (success) {
+          const originalHtml = btnSaveProd.innerHTML;
+          btnSaveProd.innerHTML = '<span class="pixel-icon icon-check"></span> ¡Órdenes de Producción Guardadas!';
+          btnSaveProd.classList.add("btn-success");
+          setTimeout(() => {
+            btnSaveProd.innerHTML = originalHtml;
+            btnSaveProd.classList.remove("btn-success");
+          }, 2000);
+          triggerProjections();
+        }
       });
     }
 
+    // Mercado Save Button
     const btnSaveMerc = document.getElementById("btn-save-mercado");
     if (btnSaveMerc) {
       btnSaveMerc.addEventListener("click", () => {
-        const state = typeof stateProvider === "function" ? stateProvider() : (stateProvider || (typeof window !== "undefined" ? window.gameState : null));
-        const nav = spatialNavigator || (typeof window !== "undefined" ? window.spatialNavigator : null);
-        this.saveMercadoFromDOM(state, nav);
+        const state = getState();
+        const nav = getNav();
+        const success = this.saveMercadoFromDOM(state, nav);
+        if (success) {
+          const originalHtml = btnSaveMerc.innerHTML;
+          btnSaveMerc.innerHTML = '<span class="pixel-icon icon-check"></span> ¡Órdenes de Mercado Guardadas!';
+          btnSaveMerc.classList.add("btn-success");
+          setTimeout(() => {
+            btnSaveMerc.innerHTML = originalHtml;
+            btnSaveMerc.classList.remove("btn-success");
+          }, 2000);
+          triggerProjections();
+        }
       });
     }
 
+    // Banco Save Button
     const btnSaveBanc = document.getElementById("btn-save-banco");
     if (btnSaveBanc) {
       btnSaveBanc.addEventListener("click", () => {
-        const state = typeof stateProvider === "function" ? stateProvider() : (stateProvider || (typeof window !== "undefined" ? window.gameState : null));
-        const nav = spatialNavigator || (typeof window !== "undefined" ? window.spatialNavigator : null);
-        this.saveBancoFromDOM(state, nav);
+        const state = getState();
+        const nav = getNav();
+        const success = this.saveBancoFromDOM(state, nav);
+        if (success) {
+          const originalHtml = btnSaveBanc.innerHTML;
+          btnSaveBanc.innerHTML = '<span class="pixel-icon icon-check"></span> ¡Operación Financiera Confirmada!';
+          btnSaveBanc.classList.add("btn-success");
+          setTimeout(() => {
+            btnSaveBanc.innerHTML = originalHtml;
+            btnSaveBanc.classList.remove("btn-success");
+          }, 2000);
+          triggerProjections();
+        }
       });
     }
+
+    // CapEx Increment Buttons in Producción
+    const capexDryerBtn = document.getElementById("prod-capex-dryer");
+    if (capexDryerBtn) {
+      capexDryerBtn.addEventListener("click", () => {
+        const input = document.getElementById("prod-capex-dryer-input");
+        if (input) {
+          const cur = parseFloat(input.value) || 0;
+          input.value = String(cur + 500);
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+          input.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+      });
+    }
+
+    const capexAgingBtn = document.getElementById("prod-capex-aging");
+    if (capexAgingBtn) {
+      capexAgingBtn.addEventListener("click", () => {
+        const input = document.getElementById("prod-capex-aging-input");
+        if (input) {
+          const cur = parseFloat(input.value) || 0;
+          input.value = String(cur + 1000);
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+          input.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+      });
+    }
+
+    const capexMillBtn = document.getElementById("prod-capex-mill");
+    if (capexMillBtn) {
+      capexMillBtn.addEventListener("click", () => {
+        const input = document.getElementById("prod-capex-mill-input");
+        if (input) {
+          const cur = parseFloat(input.value) || 0;
+          input.value = String(cur + 500);
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+          input.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+      });
+    }
+
+    // Producción reactive listeners
+    const prodInputs = [
+      "prod-sow-seedlings",
+      "prod-harvest-hectares",
+      "prod-crew-type",
+      "prod-aging-destination",
+      "prod-capex-dryer-input",
+      "prod-capex-aging-input",
+      "prod-capex-mill-input"
+    ];
+    prodInputs.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener("input", () => {
+          const nav = getNav();
+          if (nav) nav.markDirty("produccion");
+          triggerProjections();
+        });
+        el.addEventListener("change", () => {
+          const nav = getNav();
+          if (nav) nav.markDirty("produccion");
+          triggerProjections();
+        });
+      }
+    });
 
     // Mercado reactive listeners
     const sliderEl = document.getElementById("merc-selling-price-slider");
     const priceInputEl = document.getElementById("merc-selling-price-input");
 
     const onPriceChange = (newVal) => {
-      const state = typeof stateProvider === "function" ? stateProvider() : (stateProvider || (typeof window !== "undefined" ? window.gameState : null));
-      const nav = spatialNavigator || (typeof window !== "undefined" ? window.spatialNavigator : null);
+      const state = getState();
+      const nav = getNav();
       if (nav) nav.markDirty("mercado");
       this.updateMercadoElasticity(state, newVal);
+      triggerProjections();
     };
 
     if (sliderEl) {
@@ -792,24 +911,27 @@ export class SceneRenderer {
     const buyLeafInput = document.getElementById("merc-buy-leaf");
     if (buyLeafInput) {
       buyLeafInput.addEventListener("input", () => {
-        const nav = spatialNavigator || (typeof window !== "undefined" ? window.spatialNavigator : null);
+        const nav = getNav();
         if (nav) nav.markDirty("mercado");
+        triggerProjections();
       });
     }
 
     const buyCanchadaInput = document.getElementById("merc-buy-canchada");
     if (buyCanchadaInput) {
       buyCanchadaInput.addEventListener("input", () => {
-        const nav = spatialNavigator || (typeof window !== "undefined" ? window.spatialNavigator : null);
+        const nav = getNav();
         if (nav) nav.markDirty("mercado");
+        triggerProjections();
       });
     }
 
     const bypassInput = document.getElementById("merc-bypass-warehouse");
     if (bypassInput) {
       bypassInput.addEventListener("change", () => {
-        const nav = spatialNavigator || (typeof window !== "undefined" ? window.spatialNavigator : null);
+        const nav = getNav();
         if (nav) nav.markDirty("mercado");
+        triggerProjections();
       });
     }
 
@@ -818,10 +940,11 @@ export class SceneRenderer {
     const bInput = document.getElementById("banco-debt-variation-input");
 
     const onBancoChange = (newVal) => {
-      const state = typeof stateProvider === "function" ? stateProvider() : (stateProvider || (typeof window !== "undefined" ? window.gameState : null));
-      const nav = spatialNavigator || (typeof window !== "undefined" ? window.spatialNavigator : null);
+      const state = getState();
+      const nav = getNav();
       if (nav) nav.markDirty("banco");
       this.updateBancoLeverage(state, newVal);
+      triggerProjections();
     };
 
     if (bSlider) {

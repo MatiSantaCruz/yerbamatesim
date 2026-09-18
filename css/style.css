@@ -1,4 +1,5 @@
 @import url('tokens.css');
+@import url('pixel-icons.css');
 
 
 * {
@@ -22,17 +23,38 @@ body {
   top: 8px;
   z-index: 100;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  gap: 8px;
   background: var(--bg-card);
-  padding: 6px 14px;
+  padding: 8px 16px;
   border-radius: var(--border-radius);
   border: 1px solid var(--border-color);
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   box-shadow: var(--shadow-md);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+}
+
+.top-bar-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 16px;
+}
+
+.top-bar-main {
+  /* Nivel 1: Marca, Core KPIs, Acciones */
+}
+
+.top-bar-sub {
+  /* Nivel 2: Timeline de gestión y Micro-Ticker */
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="light"] .top-bar-sub {
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .brand {
@@ -94,29 +116,29 @@ body {
 
 .timeline-tracker {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 4px;
-  min-width: 160px;
-  max-width: 200px;
-  flex: 0 1 180px;
+  gap: 12px;
+  min-width: 280px;
+  max-width: 380px;
+  flex: 0 1 360px;
 }
 
 .timeline-info {
   display: flex;
-  justify-content: space-between;
-  width: 100%;
-  font-size: 0.8rem;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 0.82rem;
   font-weight: 600;
   white-space: nowrap;
 }
 
 .progress-bar-bg {
-  width: 100%;
+  flex: 1;
   height: 6px;
   background: var(--bg-input);
   border-radius: 3px;
   overflow: hidden;
+  min-width: 80px;
 }
 
 .progress-bar-fill {
@@ -274,17 +296,159 @@ body {
   display: none;
 }
 
-/* Main Layout Grid */
+/* Main Layout Grid (Zona 2: 80% Núcleo Operativo / Zona 3: 20% Panel Lateral) */
 .main-grid {
   display: grid;
-  grid-template-columns: 320px 1fr 320px;
-  gap: 20px;
+  grid-template-columns: 80fr 20fr;
+  gap: 16px;
+  align-items: start;
 }
 
 @media (max-width: 1200px) {
   .main-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* ==============================================================================
+   ZONA 2: NÚCLEO OPERATIVO Y DECISIONAL (70% ANCHO) - DIORAMAS PIXEL ART & GLASS
+   ============================================================================== */
+.spatial-navigation-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 8px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.spatial-nav-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.spatial-nav-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: var(--border-color-hover);
+  transform: translateY(-1px);
+}
+
+.spatial-nav-btn.active {
+  background: var(--accent-green);
+  color: #ffffff;
+  border-color: var(--accent-green);
+  box-shadow: 0 0 12px rgba(46, 204, 113, 0.35);
+}
+
+.spatial-nav-btn.has-unsaved-changes {
+  border-color: var(--accent-gold);
+  position: relative;
+}
+
+.spatial-nav-btn.has-unsaved-changes::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--accent-gold);
+  box-shadow: 0 0 6px var(--accent-gold);
+}
+
+/* Spatial Scenes with Pixel Art Diorama Backgrounds */
+.spatial-scene {
+  position: relative;
+  border-radius: var(--border-radius);
+  padding: 20px;
+  min-height: 650px;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.25));
+  transition: background-image 0.3s ease;
+}
+
+/* Solapa 1: Oficina Administrativa (Hub Central) */
+.scene-oficina {
+  background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.84), rgba(15, 23, 42, 0.92)), url('../assets/dioramas/bg_oficina_hub.jpg');
+}
+
+/* Solapa 2: Sector Productivo & Planta Fabril */
+.scene-produccion {
+  background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.84), rgba(15, 23, 42, 0.92)), url('../assets/dioramas/bg_produccion_planta.jpg');
+}
+
+/* Solapa 3: Mercado Mayorista & Comercial */
+.scene-mercado {
+  background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.84), rgba(15, 23, 42, 0.92)), url('../assets/dioramas/bg_mercado_acopio.jpg');
+}
+
+/* Solapa 4: Entidad Financiera / Banco */
+.scene-banco {
+  background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.84), rgba(15, 23, 42, 0.92)), url('../assets/dioramas/bg_banco_sucursal.jpg');
+}
+
+/* Light Theme Adaptive Scenic Gradients */
+[data-theme="light"] .scene-oficina {
+  background-image: linear-gradient(to bottom, rgba(248, 250, 252, 0.88), rgba(241, 245, 249, 0.94)), url('../assets/dioramas/bg_oficina_hub.jpg');
+}
+
+[data-theme="light"] .scene-produccion {
+  background-image: linear-gradient(to bottom, rgba(248, 250, 252, 0.88), rgba(241, 245, 249, 0.94)), url('../assets/dioramas/bg_produccion_planta.jpg');
+}
+
+[data-theme="light"] .scene-mercado {
+  background-image: linear-gradient(to bottom, rgba(248, 250, 252, 0.88), rgba(241, 245, 249, 0.94)), url('../assets/dioramas/bg_mercado_acopio.jpg');
+}
+
+[data-theme="light"] .scene-banco {
+  background-image: linear-gradient(to bottom, rgba(248, 250, 252, 0.88), rgba(241, 245, 249, 0.94)), url('../assets/dioramas/bg_banco_sucursal.jpg');
+}
+
+/* Tactical Glassmorphism for Scene Cards */
+.spatial-scene .card {
+  background: rgba(30, 41, 59, 0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="light"] .spatial-scene .card {
+  background: rgba(255, 255, 255, 0.90);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.12);
+}
+
+/* Scene Header Card with Tint */
+.scene-header-card {
+  border-left: 4px solid var(--accent-green) !important;
+}
+
+/* Sidebar Contextual (Zona 3: 30%) */
+.sidebar-contextual {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 /* Card Styles */
@@ -3329,3 +3493,200 @@ body {
 
 
 
+
+
+/* ==============================================================================
+   MINIMALIST UI REFACTORING (Header, Segmented Control, 65/35 Grid, Sticky Footer)
+   ============================================================================== */
+
+/* Minimalist Top Bar */
+.brand-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.header-core-kpis {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.core-kpi-item {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 0.92rem;
+  white-space: nowrap;
+  background: rgba(0, 0, 0, 0.18);
+  padding: 4px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+}
+
+[data-theme="light"] .core-kpi-item {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.core-kpi-lbl {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+
+/* Micro-Ticker Condensado de Precios */
+.micro-ticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-input);
+  padding: 4px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  font-size: 0.82rem;
+  font-family: monospace;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  letter-spacing: 0.3px;
+}
+
+.ticker-chip {
+  color: var(--text-secondary);
+}
+
+.ticker-chip strong {
+  color: var(--accent-gold);
+  font-weight: 700;
+}
+
+.ticker-divider {
+  color: var(--border-color);
+  opacity: 0.6;
+}
+
+/* Segmented Control Navigation */
+.segmented-nav {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  padding: 4px;
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+[data-theme="light"] .segmented-nav {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.segmented-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.segmented-btn * {
+  pointer-events: none;
+}
+
+.segmented-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+[data-theme="light"] .segmented-btn:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.segmented-btn.active {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  border-bottom: 2px solid var(--accent-green);
+}
+
+[data-theme="light"] .segmented-btn.active {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-bottom: 2px solid var(--accent-green);
+}
+
+/* Tools & Audit Modal */
+.tools-modal-box {
+  max-width: 580px;
+  width: 90%;
+  padding: 24px;
+  background: var(--bg-card);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.tools-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 12px;
+}
+
+.tools-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.tool-action-card {
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.tool-action-card h4 {
+  font-size: 0.88rem;
+  margin-bottom: 4px;
+  color: var(--text-primary);
+}
+
+.tool-action-card p {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+  margin-bottom: 8px;
+}
+
+.tool-action-danger {
+  border-color: rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.04);
+}
+
+/* Tabular number styling for financial consistency */
+.metric-val, .bar-kpi-val, .kpi-val {
+  font-variant-numeric: tabular-nums;
+  font-family: monospace;
+}

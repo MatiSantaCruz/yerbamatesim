@@ -20,6 +20,7 @@ import {
 import { populateDebriefingDashboard, diagnoseBankruptcyCauses } from "./modules/ui/debriefing.js";
 import { SpatialNavigator, spatialNavigator, VALID_LOCATIONS } from "./modules/ui/spatial-navigator.js";
 import { SceneRenderer, sceneRenderer } from "./modules/ui/scene-renderer.js";
+import { generateAuditCSV, exportCSV, exportJSON } from "./modules/export/audit-export.js";
 
 // Re-export all submodules for ESM consumers
 export {
@@ -83,4 +84,9 @@ if (typeof window !== "undefined") {
     spatial: { SpatialNavigator, spatialNavigator, VALID_LOCATIONS },
     renderer: { SceneRenderer, sceneRenderer }
   };
+
+  if (typeof window.initSpatialUI === "function") {
+    window.initSpatialUI();
+  }
 }
+
