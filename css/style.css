@@ -376,7 +376,7 @@ body {
   padding: 16px;
   min-height: 700px;
   background-size: cover;
-  background-position: center center;
+  background-position: right center;
   background-repeat: no-repeat;
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.25));
@@ -477,6 +477,39 @@ body {
 .spatial-scene .btn {
   padding: 6px 14px !important;
   font-size: 0.84rem !important;
+}
+
+/* Layout Asimétrico Panorámico 65% / 35% (Ventana Escénica Libre) */
+.spatial-scene .scene-header-card,
+.spatial-scene .scene-grid,
+.spatial-scene .scene-bottom-bar,
+.spatial-scene .card-oficina-summary,
+.spatial-scene #prod-ardido-alert {
+  max-width: 65%;
+  width: 65%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1280px) {
+  .spatial-scene .scene-header-card,
+  .spatial-scene .scene-grid,
+  .spatial-scene .scene-bottom-bar,
+  .spatial-scene .card-oficina-summary,
+  .spatial-scene #prod-ardido-alert {
+    max-width: 75%;
+    width: 75%;
+  }
+}
+
+@media (max-width: 960px) {
+  .spatial-scene .scene-header-card,
+  .spatial-scene .scene-grid,
+  .spatial-scene .scene-bottom-bar,
+  .spatial-scene .card-oficina-summary,
+  .spatial-scene #prod-ardido-alert {
+    max-width: 100%;
+    width: 100%;
+  }
 }
 
 /* Scene Header Card with Tint */
