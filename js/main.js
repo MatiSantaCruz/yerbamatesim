@@ -21,6 +21,7 @@ import { populateDebriefingDashboard, diagnoseBankruptcyCauses } from "./modules
 import { SpatialNavigator, spatialNavigator, VALID_LOCATIONS } from "./modules/ui/spatial-navigator.js";
 import { SceneRenderer, sceneRenderer } from "./modules/ui/scene-renderer.js";
 import { generateAuditCSV, exportCSV, exportJSON } from "./modules/export/audit-export.js";
+import "./components/index.js";
 
 // Re-export all submodules for ESM consumers
 export {

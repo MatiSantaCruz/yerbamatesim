@@ -43,8 +43,17 @@ export function computeSHA256Sync(ascii) {
     return (value >>> amount) | (value << (32 - amount));
   }
   const words = [];
-  const utf8 = unescape(encodeURIComponent(ascii));
-  const asciiBitLength = utf8.length * 8;
+  let utf8Bytes;
+  if (typeof TextEncoder !== "undefined") {
+    utf8Bytes = new TextEncoder().encode(ascii);
+  } else {
+    const rawUtf8 = unescape(encodeURIComponent(ascii));
+    utf8Bytes = new Uint8Array(rawUtf8.length);
+    for (let i = 0; i < rawUtf8.length; i++) {
+      utf8Bytes[i] = rawUtf8.charCodeAt(i);
+    }
+  }
+  const asciiBitLength = utf8Bytes.length * 8;
   
   let hash = [
     0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
@@ -62,12 +71,12 @@ export function computeSHA256Sync(ascii) {
     0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
   ];
 
-  for (let i = 0; i < utf8.length; i++) {
-    words[i >> 2] |= (utf8.charCodeAt(i) & 0xff) << (24 - (i % 4) * 8);
+  for (let i = 0; i < utf8Bytes.length; i++) {
+    words[i >> 2] |= (utf8Bytes[i] & 0xff) << (24 - (i % 4) * 8);
   }
 
-  words[utf8.length >> 2] |= 0x80 << (24 - (utf8.length % 4) * 8);
-  words[(((utf8.length + 8) >> 6) << 4) + 15] = asciiBitLength;
+  words[utf8Bytes.length >> 2] |= 0x80 << (24 - (utf8Bytes.length % 4) * 8);
+  words[(((utf8Bytes.length + 8) >> 6) << 4) + 15] = asciiBitLength;
 
   for (let b = 0; b < words.length; b += 16) {
     const w = [];

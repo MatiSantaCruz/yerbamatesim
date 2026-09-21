@@ -26,6 +26,20 @@ export class SceneRenderer {
   }
 
   /**
+   * Sanitizes strings to prevent DOM XSS and markup injection.
+   * @param {string} str
+   * @returns {string}
+   */
+  escapeHTML(str) {
+    return String(str || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  /**
    * Renders the complete tactical console for Scene 1: Oficina Administrativa (RF-05).
    * @param {object} state Current GameState reference
    */
@@ -45,42 +59,84 @@ export class SceneRenderer {
       streakEl.textContent = `${currentStreak} semanas invicto (Récord: ${maxStreak})`;
     }
 
-    const solvencyEl = document.getElementById("oficina-solvency-badge");
-    if (solvencyEl) {
-      const ratio = (state.player && state.player.accounting && typeof state.player.accounting.debt_to_assets_ratio === "number")
-        ? state.player.accounting.debt_to_assets_ratio
-        : 0;
-      
-      if (ratio > 0.80) {
-        solvencyEl.textContent = `⚠️ Quiebra Técnica (D/A: ${(ratio * 100).toFixed(1)}%)`;
-        solvencyEl.className = "badge badge-danger";
-      } else if (ratio > 0.50) {
-        solvencyEl.textContent = `⚡ Alerta Endeudamiento (D/A: ${(ratio * 100).toFixed(1)}%)`;
-        solvencyEl.className = "badge badge-warning";
-      } else {
-        solvencyEl.textContent = `✅ Solvente (D/A: ${(ratio * 100).toFixed(1)}%)`;
-        solvencyEl.className = "badge badge-success";
-      }
+    const player = state.player || {};
+    const accounting = player.accounting || {};
+    const historicalStats = state.historical_stats || {};
+
+    // 1. Resumen de Solvencia y Ratios Clave (RF-05.1)
+    const ratio = accounting.debt_to_assets_ratio || 0.0;
+    const debtRatioEl = document.getElementById("oficina-debt-ratio");
+    if (debtRatioEl) {
+      debtRatioEl.textContent = `${(ratio * 100).toFixed(1)}%`;
     }
 
-    // 2. Balance General Sintético (RF-05.2)
-    const accounting = (state.player && state.player.accounting) || {};
+    const solvencyStatus = document.getElementById("oficina-solvency-status");
+    const solvencyBadge = document.getElementById("oficina-solvency-badge");
+    let solvencyText = "✅ Solvente (D/A: " + (ratio * 100).toFixed(1) + "%)";
+    let solvencyClass = "badge badge-success";
+    if (ratio >= 0.80) {
+      solvencyText = "🚨 Quiebra Inminente (D/A ≥ 80%)";
+      solvencyClass = "badge badge-danger";
+    } else if (ratio > 0.50) {
+      solvencyText = `⚠️ Alerta Endeudamiento (D/A: ${(ratio * 100).toFixed(1)}%)`;
+      solvencyClass = "badge badge-warning";
+    }
+    if (solvencyStatus) {
+      solvencyStatus.textContent = solvencyText;
+      solvencyStatus.className = solvencyClass;
+    }
+    if (solvencyBadge) {
+      solvencyBadge.textContent = solvencyText;
+      solvencyBadge.className = solvencyClass;
+    }
+
     const assetsEl = document.getElementById("oficina-assets-val");
     if (assetsEl) {
-      assetsEl.textContent = this.formatMoney(accounting.total_assets || (state.player && state.player.cash) || 0);
+      assetsEl.textContent = this.formatMoney(accounting.total_assets || player.cash || 0);
     }
 
     const debtEl = document.getElementById("oficina-debt-val");
     if (debtEl) {
-      debtEl.textContent = this.formatMoney(state.player && state.player.bank_debt);
+      debtEl.textContent = this.formatMoney(player.bank_debt);
     }
 
-    const networthEl = document.getElementById("oficina-networth-val");
-    if (networthEl) {
-      networthEl.textContent = this.formatMoney(accounting.net_worth);
+    const networthValEl = document.getElementById("oficina-networth-val");
+    if (networthValEl) {
+      networthValEl.textContent = this.formatMoney(accounting.net_worth);
     }
 
-    const ebitdaEl = document.getElementById("oficina-ebitda-val");
+    const ebitdaValEl = document.getElementById("oficina-ebitda-val");
+    if (ebitdaValEl) {
+      ebitdaValEl.textContent = this.formatMoney(accounting.weekly_ebitda);
+    }
+
+    const cashEl = document.getElementById("oficina-cash");
+    if (cashEl) {
+      cashEl.textContent = this.formatMoney(player.cash);
+    }
+
+    const netWorthEl = document.getElementById("oficina-net-worth");
+    if (netWorthEl) {
+      netWorthEl.textContent = this.formatMoney(accounting.net_worth);
+    }
+
+    const bankDebtEl = document.getElementById("oficina-bank-debt");
+    if (bankDebtEl) {
+      bankDebtEl.textContent = this.formatMoney(player.bank_debt);
+    }
+
+    // 2. Desempeño Operativo y Retorno (RF-05.2)
+    const roeEl = document.getElementById("oficina-roe");
+    if (roeEl) {
+      roeEl.textContent = `${((accounting.annualized_roe || 0) * 100).toFixed(1)}%`;
+    }
+
+    const revenueEl = document.getElementById("oficina-weekly-revenue");
+    if (revenueEl) {
+      revenueEl.textContent = this.formatMoney(accounting.weekly_revenue);
+    }
+
+    const ebitdaEl = document.getElementById("oficina-weekly-ebitda");
     if (ebitdaEl) {
       ebitdaEl.textContent = this.formatMoney(accounting.weekly_ebitda);
     }
@@ -90,28 +146,17 @@ export class SceneRenderer {
     if (intaContainer) {
       if (state.sanitary_event) {
         const evt = state.sanitary_event;
+        const alertTitle = this.escapeHTML(evt.name || "Alerta Fitosanitaria");
+        const alertUde = this.escapeHTML(evt.ude || "Densidad poblacional superada");
+        const impactVal = ((evt.base_yield_impact_pct || 0) * 100).toFixed(0);
         intaContainer.innerHTML = `
-          <div class="inta-alert-card active" style="border-left: 4px solid var(--warning, #eab308); padding: 8px 12px; background: rgba(234, 179, 8, 0.08); border-radius: 4px;">
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
-              <strong style="color: var(--warning, #eab308); font-size: 13px;">🚨 ${evt.name || "Alerta Fitosanitaria"}</strong>
-              <span class="badge" style="font-size: 10px;">INTA</span>
-            </div>
-            <p style="margin: 4px 0; font-size: 12px; color: var(--text-color, #e5e7eb);">
-              UDE: <strong>${evt.ude || "Densidad poblacional superada"}</strong> | Impacto estimado: <strong>-${((evt.base_yield_impact_pct || 0) * 100).toFixed(0)}%</strong>
-            </p>
-            <div style="font-size: 11px; color: var(--text-muted, #9ca3af);">
-              ${evt.bpa_mitigated ? "🛡️ Atenuación por Buenas Prácticas Agrícolas (BPA) activa." : "⚠️ Sin atenuación BPA. Riesgo agronómico pleno."}
-            </div>
-          </div>
+          <yerba-inta-alert class="inta-alert-card active" status="active" title="${alertTitle}" ude="${alertUde}" impact="${impactVal}" mitigated="${evt.bpa_mitigated ? "true" : "false"}">
+            <span style="display:none;">${alertTitle}</span>
+          </yerba-inta-alert>
         `;
       } else {
         intaContainer.innerHTML = `
-          <div class="inta-alert-card clean" style="border-left: 4px solid var(--success, #22c55e); padding: 8px 12px; background: rgba(34, 197, 94, 0.08); border-radius: 4px;">
-            <div style="color: var(--success, #22c55e); font-size: 13px; font-weight: bold;">🌱 Cuenca Yerbatera en Calma</div>
-            <p style="margin: 4px 0 0 0; font-size: 12px; color: var(--text-muted, #9ca3af);">
-              Sin alertas fitosanitarias activas. Condiciones agroclimáticas y foliares estables.
-            </p>
-          </div>
+          <yerba-inta-alert class="inta-alert-card clean" status="clean" title="Cuenca Yerbatera en Calma"></yerba-inta-alert>
         `;
       }
     }
@@ -137,6 +182,7 @@ export class SceneRenderer {
           </div>
         `;
       } else {
+        const safeCrew = this.escapeHTML(pDraft.crew_type || "BPA_MECANIZADA");
         ordersContainer.innerHTML = `
           <div class="orders-summary-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; font-size: 12px;">
             <div style="padding: 8px; background: rgba(255, 255, 255, 0.04); border-radius: 4px;">
@@ -144,7 +190,7 @@ export class SceneRenderer {
               <div style="margin-top: 4px; font-size: 11px;">
                 Cosecha: ${pDraft.harvest_hectares || 0} ha<br/>
                 Siembra: ${pDraft.sow_seedlings || 0} pl<br/>
-                Cuadrilla: ${pDraft.crew_type || "BPA_MECANIZADA"}
+                Cuadrilla: ${safeCrew}
               </div>
             </div>
             <div style="padding: 8px; background: rgba(255, 255, 255, 0.04); border-radius: 4px;">

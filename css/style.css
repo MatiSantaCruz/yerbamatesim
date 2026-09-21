@@ -43,12 +43,8 @@ body {
   gap: 16px;
 }
 
-.top-bar-main {
-  /* Nivel 1: Marca, Core KPIs, Acciones */
-}
-
+/* Nivel 2: Timeline de gestión y Micro-Ticker */
 .top-bar-sub {
-  /* Nivel 2: Timeline de gestión y Micro-Ticker */
   padding-top: 6px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -377,8 +373,8 @@ body {
 .spatial-scene {
   position: relative;
   border-radius: var(--border-radius);
-  padding: 20px;
-  min-height: 650px;
+  padding: 16px;
+  min-height: 700px;
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
@@ -387,61 +383,139 @@ body {
   transition: background-image 0.3s ease;
 }
 
-/* Solapa 1: Oficina Administrativa (Hub Central) */
+/* Solapa 1: Oficina Administrativa (Hub Central) - Alta visibilidad diorama WebP */
 .scene-oficina {
-  background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.84), rgba(15, 23, 42, 0.92)), url('../assets/dioramas/bg_oficina_hub.jpg');
+  background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.28), rgba(15, 23, 42, 0.52)), url('../assets/dioramas/bg_oficina_hub.webp');
 }
 
 /* Solapa 2: Sector Productivo & Planta Fabril */
 .scene-produccion {
-  background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.84), rgba(15, 23, 42, 0.92)), url('../assets/dioramas/bg_produccion_planta.jpg');
+  background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.28), rgba(15, 23, 42, 0.52)), url('../assets/dioramas/bg_produccion_planta.webp');
 }
 
 /* Solapa 3: Mercado Mayorista & Comercial */
 .scene-mercado {
-  background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.84), rgba(15, 23, 42, 0.92)), url('../assets/dioramas/bg_mercado_acopio.jpg');
+  background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.28), rgba(15, 23, 42, 0.52)), url('../assets/dioramas/bg_mercado_acopio.webp');
 }
 
 /* Solapa 4: Entidad Financiera / Banco */
 .scene-banco {
-  background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.84), rgba(15, 23, 42, 0.92)), url('../assets/dioramas/bg_banco_sucursal.jpg');
+  background-image: linear-gradient(to bottom, rgba(15, 23, 42, 0.28), rgba(15, 23, 42, 0.52)), url('../assets/dioramas/bg_banco_sucursal.webp');
 }
 
-/* Light Theme Adaptive Scenic Gradients */
+/* Light Theme Adaptive Scenic Gradients - Alta visibilidad diorama WebP */
 [data-theme="light"] .scene-oficina {
-  background-image: linear-gradient(to bottom, rgba(248, 250, 252, 0.88), rgba(241, 245, 249, 0.94)), url('../assets/dioramas/bg_oficina_hub.jpg');
+  background-image: linear-gradient(to bottom, rgba(248, 250, 252, 0.32), rgba(241, 245, 249, 0.55)), url('../assets/dioramas/bg_oficina_hub.webp');
 }
 
 [data-theme="light"] .scene-produccion {
-  background-image: linear-gradient(to bottom, rgba(248, 250, 252, 0.88), rgba(241, 245, 249, 0.94)), url('../assets/dioramas/bg_produccion_planta.jpg');
+  background-image: linear-gradient(to bottom, rgba(248, 250, 252, 0.32), rgba(241, 245, 249, 0.55)), url('../assets/dioramas/bg_produccion_planta.webp');
 }
 
 [data-theme="light"] .scene-mercado {
-  background-image: linear-gradient(to bottom, rgba(248, 250, 252, 0.88), rgba(241, 245, 249, 0.94)), url('../assets/dioramas/bg_mercado_acopio.jpg');
+  background-image: linear-gradient(to bottom, rgba(248, 250, 252, 0.32), rgba(241, 245, 249, 0.55)), url('../assets/dioramas/bg_mercado_acopio.webp');
 }
 
 [data-theme="light"] .scene-banco {
-  background-image: linear-gradient(to bottom, rgba(248, 250, 252, 0.88), rgba(241, 245, 249, 0.94)), url('../assets/dioramas/bg_banco_sucursal.jpg');
+  background-image: linear-gradient(to bottom, rgba(248, 250, 252, 0.32), rgba(241, 245, 249, 0.55)), url('../assets/dioramas/bg_banco_sucursal.webp');
 }
 
-/* Tactical Glassmorphism for Scene Cards */
+/* Tactical Compact Glassmorphism for Scene Cards (Reducción de huella visual) */
 .spatial-scene .card {
-  background: rgba(30, 41, 59, 0.88);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.35);
+  background: rgba(15, 23, 42, 0.72) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.32) !important;
+  padding: 10px 14px !important;
+  margin-bottom: 10px !important;
+  border-radius: 8px !important;
 }
 
 [data-theme="light"] .spatial-scene .card {
-  background: rgba(255, 255, 255, 0.90);
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  box-shadow: 0 8px 24px 0 rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.76) !important;
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.08) !important;
+}
+
+.spatial-scene .card-title {
+  font-size: 0.90rem !important;
+  font-weight: 700;
+  margin-bottom: 6px !important;
+  padding-bottom: 5px !important;
+  letter-spacing: 0.01em;
+}
+
+.spatial-scene .metric-row {
+  padding: 3px 0 !important;
+  font-size: 0.82rem !important;
+}
+
+.spatial-scene .metric-val {
+  font-size: 0.90rem !important;
+}
+
+.spatial-scene p {
+  font-size: 0.78rem !important;
+  line-height: 1.35 !important;
+  margin: 2px 0 6px 0 !important;
+}
+
+.spatial-scene label {
+  font-size: 0.78rem !important;
+  margin-bottom: 3px !important;
+}
+
+.spatial-scene input.input-control,
+.spatial-scene select.input-control {
+  padding: 4px 8px !important;
+  font-size: 0.82rem !important;
+  height: auto !important;
+  border-radius: 4px !important;
+}
+
+.spatial-scene .btn {
+  padding: 6px 14px !important;
+  font-size: 0.84rem !important;
 }
 
 /* Scene Header Card with Tint */
-.scene-header-card {
+.spatial-scene .scene-header-card {
   border-left: 4px solid var(--accent-green) !important;
+  padding: 8px 14px !important;
+  margin-bottom: 10px !important;
+}
+
+.spatial-scene .scene-header-card h2 {
+  font-size: 1.05rem !important;
+  margin: 0 !important;
+}
+
+.spatial-scene .scene-header-card p {
+  font-size: 0.76rem !important;
+  margin: 2px 0 0 0 !important;
+}
+
+/* Spatial Scene Compact Grid & Action Bars */
+.spatial-scene .scene-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.spatial-scene .scene-bottom-bar {
+  text-align: right;
+  padding: 8px 14px !important;
+  margin-bottom: 6px !important;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.spatial-scene .card-oficina-summary {
+  padding: 10px 16px !important;
+  margin-bottom: 8px !important;
 }
 
 /* Sidebar Contextual (Zona 3: 30%) */
@@ -459,6 +533,7 @@ body {
   padding: 20px;
   margin-bottom: 20px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  contain: paint layout;
 }
 
 .card-title {

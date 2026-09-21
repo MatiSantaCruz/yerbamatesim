@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/pixel-icons.css">
   <link rel="stylesheet" href="css/style.css">
+  <script type="module" src="js/components/index.js"></script>
 </head>
 <body>
 
@@ -31,19 +32,19 @@
       <!-- Core Player KPIs (Caja, Patrimonio, Apalancamiento) -->
       <div class="header-metrics-matrix">
         <div class="header-core-kpis">
-          <div class="core-kpi-item" id="header-cash-container">
-            <span class="core-kpi-lbl">Caja:</span>
-            <strong class="kpi-val val-positive" id="header-cash">$0.00</strong>
-          </div>
-          <div class="core-kpi-item" id="header-networth-container">
-            <span class="core-kpi-lbl">Patrimonio:</span>
-            <strong class="kpi-val val-positive" id="header-networth">$0.00</strong>
-          </div>
-          <div class="core-kpi-item" id="header-leverage-container">
-            <span class="core-kpi-lbl">D/A:</span>
-            <strong class="kpi-val val-positive" id="header-leverage">0.0%</strong>
+          <yerba-kpi-chip class="core-kpi-item" id="header-cash-container" label="Caja:">
+            <span slot="label" class="core-kpi-lbl">Caja:</span>
+            <strong slot="value" class="kpi-val val-positive" id="header-cash">$0.00</strong>
+          </yerba-kpi-chip>
+          <yerba-kpi-chip class="core-kpi-item" id="header-networth-container" label="Patrimonio:">
+            <span slot="label" class="core-kpi-lbl">Patrimonio:</span>
+            <strong slot="value" class="kpi-val val-positive" id="header-networth">$0.00</strong>
+          </yerba-kpi-chip>
+          <yerba-kpi-chip class="core-kpi-item" id="header-leverage-container" label="D/A:">
+            <span slot="label" class="core-kpi-lbl">D/A:</span>
+            <strong slot="value" class="kpi-val val-positive" id="header-leverage">0.0%</strong>
             <span id="header-debt" style="display:none;">$0.00</span>
-          </div>
+          </yerba-kpi-chip>
         </div>
       </div>
 
@@ -82,7 +83,7 @@
       </div>
 
       <!-- Micro-Ticker Horizontal Descomprimido -->
-      <div class="micro-ticker" id="market-micro-ticker">
+      <yerba-micro-ticker class="micro-ticker" id="market-micro-ticker">
         <span class="ticker-chip" title="Hoja Verde Spot">HV: <strong id="ticker-leaf">$0.00</strong></span>
         <span class="ticker-divider">|</span>
         <span class="ticker-chip" title="Yerba Canchada Spot">YC: <strong id="ticker-canchada">$0.00</strong></span>
@@ -90,7 +91,7 @@
         <span class="ticker-chip" title="Yerba Elaborada Góndola">YE: <strong id="ticker-final">$0.00</strong></span>
         <span class="ticker-divider">|</span>
         <span class="ticker-chip" title="Demanda Semanal">Dem: <strong id="ticker-demand">0 kg</strong></span>
-      </div>
+      </yerba-micro-ticker>
     </div>
   </header>
 
@@ -122,21 +123,21 @@
 
       <!-- Escenario 1: Oficina Administrativa (Hub Central) (RF-02, RF-05, RF-06) -->
       <div id="scene-oficina" class="spatial-scene scene-oficina" style="display: block;">
-        <div class="card scene-header-card" style="margin-bottom: 14px; border-left: 4px solid var(--accent, #10b981);">
+        <div class="card scene-header-card" style="margin-bottom: 10px; border-left: 4px solid var(--accent, #10b981);">
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <div>
-              <h2 style="margin: 0; font-size: 1.25rem;"><span class="pixel-icon icon-oficina"></span> Oficina Administrativa — Centro de Mando Táctico</h2>
-              <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-muted, #9ca3af);">
+              <h2 style="margin: 0; font-size: 1.05rem;"><span class="pixel-icon icon-oficina"></span> Oficina Administrativa — Centro de Mando Táctico</h2>
+              <p style="margin: 2px 0 0 0; font-size: 0.76rem; color: var(--text-muted, #9ca3af);">
                 Monitoreo consolidado, balances sintéticos y orden ejecutiva de cierre semanal.
               </p>
             </div>
-            <div id="oficina-solvency-badge" class="badge badge-success" style="font-size: 0.85rem; padding: 6px 12px;">
+            <div id="oficina-solvency-badge" class="badge badge-success" style="font-size: 0.82rem; padding: 4px 10px;">
               <span class="pixel-icon icon-check"></span> Solvente
             </div>
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+        <div class="scene-grid">
           <!-- 1. Estado de Situación & Racha (RF-05.1) -->
           <div class="card" id="oficina-status-card">
             <h3 class="card-title"><span class="pixel-icon icon-clipboard"></span> Estado de Situación & Racha</h3>
@@ -174,12 +175,12 @@
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+        <div class="scene-grid">
           <!-- 3. Buzón Fitosanitario INTA (RF-05.3) -->
           <div class="card" id="oficina-inta-card">
             <h3 class="card-title"><span class="pixel-icon icon-nursery"></span> Buzón Fitosanitario & Agroclimático INTA</h3>
             <div id="oficina-inta-alerts-container">
-              <!-- Rendered by sceneRenderer -->
+              <yerba-inta-alert id="oficina-inta-alert" status="clean" title="Cuenca Yerbatera en Calma"></yerba-inta-alert>
             </div>
           </div>
 
@@ -193,11 +194,11 @@
         </div>
 
         <!-- Resumen de Cierre Operativo (RF-06) -->
-        <div class="card card-oficina-summary" style="text-align: center; padding: 16px 20px; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 8px;">
-          <p style="margin: 0 0 12px 0; font-size: 0.86rem; color: var(--text-secondary);">
+        <div class="card card-oficina-summary" style="text-align: center; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.35);">
+          <p style="margin: 0 0 8px 0; font-size: 0.80rem; color: var(--text-secondary);">
             <span class="pixel-icon icon-info"></span> <strong>Centro de Liquidación Semanal:</strong> Revisa el consolidador de órdenes departamentales. Al confirmar tus decisiones de Producción, Mercado y Banco, ejecuta el turno para procesar la semana frente a AgroYerba del Norte.
           </p>
-          <button id="btn-oficina-execute" class="btn btn-primary btn-execute-turn" type="button" style="padding: 10px 28px; font-size: 0.95rem; font-weight: bold; background: #10b981; border: none; cursor: pointer; border-radius: 6px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
+          <button id="btn-oficina-execute" class="btn btn-primary btn-execute-turn" type="button" style="padding: 8px 22px; font-size: 0.90rem; font-weight: bold; background: #10b981; border: none; cursor: pointer; border-radius: 6px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
             <span class="pixel-icon icon-lightning"></span> ⚡ Ejecutar y Liquidar Turno Semanal
           </button>
         </div>
@@ -205,34 +206,34 @@
 
       <!-- Escenario 2: Sector Productivo & Planta Fabril (RF-04, RF-07) -->
       <div id="scene-produccion" class="spatial-scene scene-produccion" style="display: none;">
-        <div class="card scene-header-card" style="margin-bottom: 14px; border-left: 4px solid var(--accent, #10b981);">
+        <div class="card scene-header-card" style="margin-bottom: 10px; border-left: 4px solid var(--accent, #10b981);">
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <div>
-              <h2 style="margin: 0; font-size: 1.25rem;"><span class="pixel-icon icon-produccion"></span> Sector Productivo & Planta Fabril — Cadena de Transformación</h2>
-              <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-muted, #9ca3af);">
+              <h2 style="margin: 0; font-size: 1.05rem;"><span class="pixel-icon icon-produccion"></span> Sector Productivo & Planta Fabril — Cadena de Transformación</h2>
+              <p style="margin: 2px 0 0 0; font-size: 0.76rem; color: var(--text-muted, #9ca3af);">
                 Gestión de chacra, vivero, sapecado, merma 3:1, estacionamiento y molienda IRAM 20550.
               </p>
             </div>
-            <span class="badge" style="font-size: 0.85rem; padding: 6px 12px; background: rgba(16, 185, 129, 0.15); color: var(--accent, #10b981);">
+            <span class="badge" style="font-size: 0.82rem; padding: 4px 10px; background: rgba(16, 185, 129, 0.15); color: var(--accent, #10b981);">
               <span class="pixel-icon icon-mill"></span> Operaciones
             </span>
           </div>
         </div>
 
         <!-- Alerta de Riesgo de Ardido / Recalentamiento (>95%) -->
-        <div id="prod-ardido-alert" class="card" style="display: none; margin-bottom: 14px; border-left: 4px solid var(--danger, #ef4444); background: rgba(239, 68, 68, 0.1);">
+        <div id="prod-ardido-alert" class="card" style="display: none; margin-bottom: 10px; border-left: 4px solid var(--danger, #ef4444); background: rgba(239, 68, 68, 0.15);">
           <div style="display: flex; align-items: center; gap: 10px;">
-            <span style="font-size: 24px;">🔥</span>
+            <span style="font-size: 20px;">🔥</span>
             <div>
-              <strong style="color: var(--danger, #ef4444); font-size: 14px;">ALERTA CRÍTICA: Riesgo Inminente de Ardido en Planchada (&gt;95%)</strong>
-              <p style="margin: 2px 0 0 0; font-size: 12px; color: var(--text-color, #e5e7eb);">
+              <strong style="color: var(--danger, #ef4444); font-size: 13px;">ALERTA CRÍTICA: Riesgo Inminente de Ardido en Planchada (&gt;95%)</strong>
+              <p style="margin: 2px 0 0 0; font-size: 11px; color: var(--text-color, #e5e7eb);">
                 La tolva del secadero está saturada. La hoja verde acumulada comenzará a fermentar y perder calidad organoléptica si no se sapeca de inmediato o se amplía la capacidad.
               </p>
             </div>
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+        <div class="scene-grid">
           <!-- 1. Chacra y Vivero (RF-07.1) -->
           <div class="card" id="prod-chacra-card">
             <h3 class="card-title"><span class="pixel-icon icon-nursery"></span> 1. Chacra & Vivero de Plantines</h3>
@@ -240,28 +241,28 @@
               <span id="prod-nursery-cap-display">Capacidad vivero: 300 plantines</span>
               <span class="badge" style="font-size: 10px;">Tope: 300 pl</span>
             </div>
-            <div style="margin: 8px 0;">
-              <label for="prod-sow-seedlings" style="font-size: 0.82rem; color: var(--text-muted); display: block; margin-bottom: 4px;">
+            <div style="margin: 6px 0;">
+              <label for="prod-sow-seedlings" style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 2px;">
                 Siembra de Plantines (0 a 300 unidades):
               </label>
-              <input type="number" id="prod-sow-seedlings" min="0" max="300" step="10" value="0" class="input-control" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
+              <input type="number" id="prod-sow-seedlings" min="0" max="300" step="10" value="0" class="input-control" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
             </div>
 
-            <div class="metric-row" style="margin-top: 10px;">
+            <div class="metric-row" style="margin-top: 6px;">
               <span id="prod-hectares-display">Superficie plantada: 10.0 ha</span>
             </div>
-            <div style="margin: 8px 0;">
-              <label for="prod-harvest-hectares" style="font-size: 0.82rem; color: var(--text-muted); display: block; margin-bottom: 4px;">
+            <div style="margin: 6px 0;">
+              <label for="prod-harvest-hectares" style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 2px;">
                 Cosecha de Hoja Verde (Hectáreas a tarefar):
               </label>
-              <input type="number" id="prod-harvest-hectares" min="0" max="10" step="0.5" value="0" class="input-control" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
+              <input type="number" id="prod-harvest-hectares" min="0" max="10" step="0.5" value="0" class="input-control" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
             </div>
 
-            <div style="margin-top: 10px;">
-              <label for="prod-crew-type" style="font-size: 0.82rem; color: var(--text-muted); display: block; margin-bottom: 4px;">
+            <div style="margin-top: 6px;">
+              <label for="prod-crew-type" style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 2px;">
                 Modalidad de Cuadrilla de Tarefa:
               </label>
-              <select id="prod-crew-type" class="input-control" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
+              <select id="prod-crew-type" class="input-control" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
                 <option value="BPA_MECANIZADA">Cuadrilla BPA Mecanizada ($45/kg - Cero sanción SRT)</option>
                 <option value="TRADICIONAL_MANUAL">Cuadrilla Tradicional Manual ($30/kg - Riesgo laboral)</option>
               </select>
@@ -280,23 +281,23 @@
               <strong id="prod-hopper-stock">0 kg</strong>
             </div>
 
-            <div style="margin: 12px 0 6px 0;">
-              <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 4px;">
+            <div style="margin: 8px 0 4px 0;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.78rem; margin-bottom: 2px;">
                 <span>Nivel de Saturación de Tolva:</span>
                 <strong id="prod-hopper-pct">0%</strong>
               </div>
-              <div style="width: 100%; height: 12px; background: rgba(255, 255, 255, 0.1); border-radius: 6px; overflow: hidden;">
+              <div style="width: 100%; height: 10px; background: rgba(255, 255, 255, 0.1); border-radius: 5px; overflow: hidden;">
                 <div id="prod-hopper-bar" style="width: 0%; height: 100%; background: var(--accent, #10b981); transition: width 0.3s ease;"></div>
               </div>
             </div>
 
-            <div style="margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border-color, #333);">
-              <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">
-                Inversión CapEx Secadero (+kg/sem a $150/kg, Lead time 2 sem):
+            <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border-color, #333);">
+              <label style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 2px;">
+                Inversión CapEx Secadero (+kg/sem a $150/kg):
               </label>
-              <div style="display: flex; gap: 8px;">
-                <input type="number" id="prod-capex-dryer-input" min="0" step="500" value="0" class="input-control" style="flex: 1; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
-                <button id="prod-capex-dryer" class="btn btn-secondary" type="button" style="font-size: 0.8rem;">
+              <div style="display: flex; gap: 6px;">
+                <input type="number" id="prod-capex-dryer-input" min="0" step="500" value="0" class="input-control" style="flex: 1; padding: 5px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
+                <button id="prod-capex-dryer" class="btn btn-secondary" type="button" style="font-size: 0.78rem; padding: 4px 10px;">
                   + CapEx Secadero
                 </button>
               </div>
@@ -304,7 +305,7 @@
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+        <div class="scene-grid">
           <!-- 3. Estacionamiento (Noques vs Cámaras) (RF-07.3) -->
           <div class="card" id="prod-aging-card">
             <h3 class="card-title"><span class="pixel-icon icon-package"></span> 3. Estacionamiento de Canchada</h3>
@@ -313,23 +314,23 @@
               <strong id="prod-aging-cap-display">0 kg</strong>
             </div>
 
-            <div style="margin: 10px 0;">
-              <label for="prod-aging-destination" style="font-size: 0.82rem; color: var(--text-muted); display: block; margin-bottom: 4px;">
+            <div style="margin: 8px 0;">
+              <label for="prod-aging-destination" style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 2px;">
                 Destino Tecnológico del Lote:
               </label>
-              <select id="prod-aging-destination" class="input-control" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
-                <option value="ACCELERATED">⚡ Cámara Acelerada (4 semanas / Calidad 50 / Coef. 0.85)</option>
-                <option value="NATURAL">🌿 Noques Naturales (24 semanas / Calidad 100 / Coef. 1.00)</option>
+              <select id="prod-aging-destination" class="input-control" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
+                <option value="ACCELERATED">⚡ Cámara Acelerada (4 semanas / Calidad 50)</option>
+                <option value="NATURAL">🌿 Noques Naturales (24 semanas / Calidad 100)</option>
               </select>
             </div>
 
-            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-color, #333);">
-              <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">
+            <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border-color, #333);">
+              <label style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 2px;">
                 CapEx Estacionamiento (+kg espacio a $95/$40):
               </label>
-              <div style="display: flex; gap: 8px;">
-                <input type="number" id="prod-capex-aging-input" min="0" step="1000" value="0" class="input-control" style="flex: 1; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
-                <button id="prod-capex-aging" class="btn btn-secondary" type="button" style="font-size: 0.8rem;">
+              <div style="display: flex; gap: 6px;">
+                <input type="number" id="prod-capex-aging-input" min="0" step="1000" value="0" class="input-control" style="flex: 1; padding: 5px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
+                <button id="prod-capex-aging" class="btn btn-secondary" type="button" style="font-size: 0.78rem; padding: 4px 10px;">
                   + CapEx Depósito
                 </button>
               </div>
@@ -344,19 +345,19 @@
               <strong id="prod-mill-cap-display">0 kg/sem</strong>
             </div>
 
-            <div style="margin: 10px 0;">
-              <p style="margin: 0; font-size: 0.82rem; color: var(--text-muted);">
+            <div style="margin: 8px 0;">
+              <p style="margin: 0; font-size: 0.78rem; color: var(--text-muted);">
                 La canchada madura se transforma en Yerba Elaborada bajo especificaciones IRAM 20550 lista para góndola.
               </p>
             </div>
 
-            <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-color, #333);">
-              <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">
+            <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border-color, #333);">
+              <label style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-bottom: 2px;">
                 Inversión CapEx Molino (+kg/sem a $200/kg):
               </label>
-              <div style="display: flex; gap: 8px;">
-                <input type="number" id="prod-capex-mill-input" min="0" step="500" value="0" class="input-control" style="flex: 1; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
-                <button id="prod-capex-mill" class="btn btn-secondary" type="button" style="font-size: 0.8rem;">
+              <div style="display: flex; gap: 6px;">
+                <input type="number" id="prod-capex-mill-input" min="0" step="500" value="0" class="input-control" style="flex: 1; padding: 5px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
+                <button id="prod-capex-mill" class="btn btn-secondary" type="button" style="font-size: 0.78rem; padding: 4px 10px;">
                   + CapEx Molino
                 </button>
               </div>
@@ -365,11 +366,11 @@
         </div>
 
         <!-- 5. Barra de Guardado Local de Producción (RF-03, RF-04) -->
-        <div class="card" style="text-align: right; padding: 14px; background: rgba(255, 255, 255, 0.02); display: flex; justify-content: space-between; align-items: center;">
-          <span style="font-size: 0.85rem; color: var(--text-muted);">
+        <div class="card scene-bottom-bar">
+          <span style="font-size: 0.78rem; color: var(--text-muted);">
             * Se requiere saldo de caja positivo para validar las decisiones de siembra, cosecha y CapEx.
           </span>
-          <button id="btn-save-produccion" class="btn btn-primary" type="button" style="font-size: 0.95rem; padding: 10px 24px;">
+          <button id="btn-save-produccion" class="btn btn-primary" type="button" style="font-size: 0.88rem; padding: 7px 18px;">
             <span class="pixel-icon icon-save"></span> Confirmar y Guardar Órdenes de Producción
           </button>
         </div>
@@ -377,54 +378,54 @@
 
       <!-- Escenario 3: Mercado Mayorista & Comercial (RF-08) -->
       <div id="scene-mercado" class="spatial-scene scene-mercado" style="display: none;">
-        <div class="card" style="margin-bottom: 14px; background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95)); border-left: 4px solid var(--accent, #10b981);">
+        <div class="card scene-header-card" style="margin-bottom: 10px; border-left: 4px solid var(--accent, #10b981);">
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <div>
-              <h2 style="margin: 0; font-size: 1.25rem; color: #fff;"><span class="pixel-icon icon-mercado"></span> Mercado Mayorista & Política Comercial</h2>
-              <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-muted);">
+              <h2 style="margin: 0; font-size: 1.05rem;"><span class="pixel-icon icon-mercado"></span> Mercado Mayorista & Política Comercial</h2>
+              <p style="margin: 2px 0 0 0; font-size: 0.76rem; color: var(--text-muted);">
                 Aprovisionamiento spot de materia prima, logística de desvío (bypass) y fijación de precio en góndola frente a la competencia regional.
               </p>
             </div>
-            <span class="badge" style="background: rgba(16, 185, 129, 0.2); color: var(--accent, #10b981); border: 1px solid var(--accent, #10b981);">
-              ÁREA COMERCIAL
+            <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: var(--accent, #10b981); border: 1px solid var(--accent, #10b981); font-size: 0.82rem; padding: 4px 10px;">
+              Área Comercial
             </span>
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+        <div class="scene-grid">
           <!-- 1. Make or Buy Externo: Compras Spot y Bypass Logístico (RF-08.1) -->
           <div class="card" id="merc-spot-card">
             <h3 class="card-title"><span class="pixel-icon icon-mercado"></span> 1. Abastecimiento Spot & Bypass Logístico</h3>
-            <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: -4px; margin-bottom: 12px;">
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: -2px; margin-bottom: 8px;">
               Adquiere materia prima a terceros para complementar tu cosecha propia o sortear cuellos de botella térmicos.
             </p>
 
-            <div style="margin-bottom: 12px;">
+            <div style="margin-bottom: 8px;">
               <div class="metric-row">
                 <span>Hoja Verde Spot a Colonos:</span>
                 <strong id="merc-leaf-price" class="val-primary">$250.00/kg</strong>
               </div>
-              <label for="merc-buy-leaf" style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-top: 4px; margin-bottom: 4px;">
+              <label for="merc-buy-leaf" style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-top: 2px; margin-bottom: 2px;">
                 Comprar Hoja Verde (kg ingresan a tolva de secadero):
               </label>
-              <input type="number" id="merc-buy-leaf" min="0" step="500" value="0" class="input-control" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
+              <input type="number" id="merc-buy-leaf" min="0" step="500" value="0" class="input-control" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
             </div>
 
-            <div style="padding-top: 10px; border-top: 1px solid var(--border-color, #333); margin-bottom: 12px;">
+            <div style="padding-top: 6px; border-top: 1px solid var(--border-color, #333); margin-bottom: 8px;">
               <div class="metric-row">
                 <span>Yerba Canchada Mayorista:</span>
                 <strong id="merc-canchada-price" class="val-primary">$950.00/kg</strong>
               </div>
-              <label for="merc-buy-canchada" style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-top: 4px; margin-bottom: 4px;">
+              <label for="merc-buy-canchada" style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-top: 2px; margin-bottom: 2px;">
                 Comprar Canchada Mayorista (kg directo a maduración):
               </label>
-              <input type="number" id="merc-buy-canchada" min="0" step="500" value="0" class="input-control" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
+              <input type="number" id="merc-buy-canchada" min="0" step="500" value="0" class="input-control" style="width: 100%; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
             </div>
 
             <!-- Bypass Logístico Selector (RF-08.1) -->
-            <div style="padding: 10px; background: rgba(2, 132, 199, 0.1); border-left: 3px solid #0284c7; border-radius: 4px;">
-              <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; font-size: 0.82rem; color: #bae6fd;">
-                <input type="checkbox" id="merc-bypass-warehouse" checked style="margin-top: 3px; accent-color: #0284c7;">
+            <div style="padding: 6px 10px; background: rgba(2, 132, 199, 0.1); border-left: 3px solid #0284c7; border-radius: 4px;">
+              <label style="display: flex; align-items: flex-start; gap: 6px; cursor: pointer; font-size: 0.76rem; color: #bae6fd;">
+                <input type="checkbox" id="merc-bypass-warehouse" checked style="margin-top: 2px; accent-color: #0284c7;">
                 <span>
                   <strong><span class="pixel-icon icon-lightning"></span> Circuito Bypass Logístico Activo:</strong> La canchada mayorista omite el sapecado y secado e ingresa directamente a estacionamiento sin saturar la tolva ni generar riesgo de ardido.
                 </span>
@@ -435,7 +436,7 @@
           <!-- 2. Pizarra y Radar Regional (RF-08.4) -->
           <div class="card" id="merc-board-card">
             <h3 class="card-title"><span class="pixel-icon icon-chart"></span> 2. Pizarra de Mercado & Inteligencia Competitiva</h3>
-            <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: -4px; margin-bottom: 12px;">
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: -2px; margin-bottom: 8px;">
               Monitoreo del volumen de demanda agregada del NEA y cotización de referencia del Bot rival.
             </p>
 
@@ -448,58 +449,59 @@
               <strong id="merc-rival-price-display" class="val-warning">$3.200/kg</strong>
             </div>
 
-            <div style="margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border-color, #333);">
-              <span style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 6px;">
+            <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--border-color, #333);">
+              <span style="font-size: 0.76rem; color: var(--text-muted); display: block; margin-bottom: 4px;">
                 Participación de Mercado (Semana Previa):
               </span>
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <div style="padding: 8px; background: rgba(255, 255, 255, 0.04); border-radius: 4px; text-align: center;">
-                  <span style="font-size: 0.72rem; color: var(--text-muted); display: block;">Tu Molino</span>
-                  <strong id="merc-share-player-display" style="font-size: 1rem; color: var(--accent, #10b981);">40.0%</strong>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                <div style="padding: 6px; background: rgba(255, 255, 255, 0.04); border-radius: 4px; text-align: center;">
+                  <span style="font-size: 0.70rem; color: var(--text-muted); display: block;">Tu Molino</span>
+                  <strong id="merc-share-player-display" style="font-size: 0.92rem; color: var(--accent, #10b981);">40.0%</strong>
                 </div>
-                <div style="padding: 8px; background: rgba(255, 255, 255, 0.04); border-radius: 4px; text-align: center;">
-                  <span style="font-size: 0.72rem; color: var(--text-muted); display: block;">Bot Rival</span>
-                  <strong id="merc-share-bot-display" style="font-size: 1rem; color: #f59e0b;">40.0%</strong>
+                <div style="padding: 6px; background: rgba(255, 255, 255, 0.04); border-radius: 4px; text-align: center;">
+                  <span style="font-size: 0.70rem; color: var(--text-muted); display: block;">Bot Rival</span>
+                  <strong id="merc-share-bot-display" style="font-size: 0.92rem; color: #f59e0b;">40.0%</strong>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+        <div class="scene-grid">
           <!-- 3. Fijación de Precio Góndola (RF-08.2) -->
           <div class="card" id="merc-pricing-card">
             <h3 class="card-title"><span class="pixel-icon icon-tag"></span> 3. Política de Precios al Consumidor</h3>
-            <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: -4px; margin-bottom: 12px;">
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: -2px; margin-bottom: 8px;">
               Fija el precio final de tu paquete de 1 kg bajo la banda regulada ($2.800 a $4.200 / kg).
             </p>
 
             <div class="metric-row">
               <span>Precio Seleccionado para Góndola:</span>
-              <strong id="merc-price-display" style="font-size: 1.25rem; color: var(--accent, #10b981);">$3.200/kg</strong>
+              <strong id="merc-price-display" style="font-size: 1.1rem; color: var(--accent, #10b981);">$3.200/kg</strong>
             </div>
 
-            <div style="margin: 14px 0;">
-              <input type="range" id="merc-selling-price-slider" min="2800" max="4200" step="25" value="3200" style="width: 100%; accent-color: var(--accent, #10b981); cursor: pointer;">
-              <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">
-                <span>$2.800 (Mínimo Banda)</span>
-                <span>$3.500</span>
-                <span>$4.200 (Máximo Banda)</span>
+            <yerba-decision-slider id="merc-decision-slider" min="2800" max="4200" step="25" value="3200">
+              <div slot="controls">
+                <input type="range" id="merc-selling-price-slider" min="2800" max="4200" step="25" value="3200" style="width: 100%; accent-color: var(--accent, #10b981); cursor: pointer;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.70rem; color: var(--text-muted); margin-top: 2px;">
+                  <span>$2.800 (Mínimo)</span>
+                  <span>$3.500</span>
+                  <span>$4.200 (Máximo)</span>
+                </div>
+                <div style="display: flex; gap: 6px; align-items: center; margin-top: 6px;">
+                  <label for="merc-selling-price-input" style="font-size: 0.78rem; color: var(--text-muted); white-space: nowrap;">
+                    Ajuste exacto ($):
+                  </label>
+                  <input type="number" id="merc-selling-price-input" min="2800" max="4200" step="25" value="3200" class="input-control" style="flex: 1; padding: 5px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
+                </div>
               </div>
-            </div>
-
-            <div style="display: flex; gap: 8px; align-items: center;">
-              <label for="merc-selling-price-input" style="font-size: 0.8rem; color: var(--text-muted); white-space: nowrap;">
-                Ajuste exacto ($):
-              </label>
-              <input type="number" id="merc-selling-price-input" min="2800" max="4200" step="25" value="3200" class="input-control" style="flex: 1; padding: 6px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
-            </div>
+            </yerba-decision-slider>
           </div>
 
           <!-- 4. Retroalimentación de Elasticidad y Absorción (RF-08.3) -->
           <div class="card" id="merc-elasticity-card">
             <h3 class="card-title"><span class="pixel-icon icon-abacus"></span> 4. Absorción Proyectada por Elasticidad Cruzada</h3>
-            <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: -4px; margin-bottom: 12px;">
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: -2px; margin-bottom: 8px;">
               Cálculo síncrono del volumen demandado según tu diferencial de precio relativo al competidor.
             </p>
 
@@ -510,21 +512,21 @@
 
             <div class="metric-row">
               <span>Demanda Proyectada Absorbida:</span>
-              <strong id="merc-absorbed-demand-display" style="font-size: 1.15rem; color: var(--accent, #10b981);">6.000 kg/sem</strong>
+              <strong id="merc-absorbed-demand-display" style="font-size: 1.05rem; color: var(--accent, #10b981);">6.000 kg/sem</strong>
             </div>
 
-            <div style="margin-top: 10px; padding: 10px; background: rgba(255, 255, 255, 0.03); border-radius: 4px; font-size: 0.78rem; color: var(--text-muted); line-height: 1.4;">
-              💡 <em>Pedagogía Microeconómica:</em> Un precio inferior al bot estimula la captación de demanda por encima de la media regional, mientras que un precio superior eleva el margen unitario pero cede volumen de ventas al rival.
+            <div style="margin-top: 6px; padding: 6px 8px; background: rgba(255, 255, 255, 0.03); border-radius: 4px; font-size: 0.74rem; color: var(--text-muted); line-height: 1.3;">
+              💡 <em>Pedagogía Microeconómica:</em> Un precio inferior al bot estimula la captación de demanda, mientras que un precio superior eleva el margen pero cede cuota.
             </div>
           </div>
         </div>
 
         <!-- 5. Barra de Guardado Local de Mercado (RF-03, RF-04) -->
-        <div class="card" style="text-align: right; padding: 14px; background: rgba(255, 255, 255, 0.02); display: flex; justify-content: space-between; align-items: center;">
-          <span style="font-size: 0.85rem; color: var(--text-muted);">
+        <div class="card scene-bottom-bar">
+          <span style="font-size: 0.78rem; color: var(--text-muted);">
             * Las compras spot de hoja verde y canchada se debitan inmediatamente contra tu saldo de caja disponible.
           </span>
-          <button id="btn-save-mercado" class="btn btn-primary" type="button" style="font-size: 0.95rem; padding: 10px 24px;">
+          <button id="btn-save-mercado" class="btn btn-primary" type="button" style="font-size: 0.88rem; padding: 7px 18px;">
             <span class="pixel-icon icon-save"></span> Confirmar y Guardar Órdenes de Mercado
           </button>
         </div>
@@ -532,25 +534,25 @@
 
       <!-- Escenario 4: Entidad Financiera / Banco (RF-09) -->
       <div id="scene-banco" class="spatial-scene scene-banco" style="display: none;">
-        <div class="card" style="margin-bottom: 14px; background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.95)); border-left: 4px solid #3b82f6;">
+        <div class="card scene-header-card" style="margin-bottom: 10px; border-left: 4px solid #3b82f6;">
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <div>
-              <h2 style="margin: 0; font-size: 1.25rem; color: #fff;"><span class="pixel-icon icon-banco"></span> Entidad Financiera & Tesorería</h2>
-              <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: var(--text-muted);">
+              <h2 style="margin: 0; font-size: 1.05rem;"><span class="pixel-icon icon-banco"></span> Entidad Financiera & Tesorería</h2>
+              <p style="margin: 2px 0 0 0; font-size: 0.76rem; color: var(--text-muted);">
                 Gestión de estructura de capital, financiamiento productivo, servicio de deuda y control riguroso del ratio de apalancamiento D/A.
               </p>
             </div>
-            <span class="badge" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid #3b82f6;">
-              ÁREA FINANCIERA
+            <span class="badge" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid #3b82f6; font-size: 0.82rem; padding: 4px 10px;">
+              Área Financiera
             </span>
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+        <div class="scene-grid">
           <!-- 1. Posición de Deuda & Condiciones Financieras (RF-09.1) -->
           <div class="card" id="banco-status-card">
             <h3 class="card-title"><span class="pixel-icon icon-banco"></span> 1. Posición de Deuda & Condiciones</h3>
-            <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: -4px; margin-bottom: 12px;">
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: -2px; margin-bottom: 8px;">
               Línea de crédito comercial para capital de trabajo y proyectos de inversión CapEx.
             </p>
 
@@ -578,81 +580,82 @@
           <!-- 2. Semáforo Visual de Solvencia & Ratio D/A (RF-09.4) -->
           <div class="card" id="banco-solvency-card">
             <h3 class="card-title"><span class="pixel-icon icon-traffic-light"></span> 2. Diagnóstico de Solvencia & Apalancamiento</h3>
-            <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: -4px; margin-bottom: 12px;">
+            <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: -2px; margin-bottom: 8px;">
               Tope legal máximo de endeudamiento permitido: 80% del valor total de tus activos.
             </p>
 
-            <div class="metric-row" style="margin-bottom: 10px;">
+            <div class="metric-row" style="margin-bottom: 8px;">
               <span>Ratio Deuda / Activos Proyectado (D/A):</span>
-              <strong id="banco-leverage-ratio-display" style="font-size: 1.2rem;">0.0%</strong>
+              <strong id="banco-leverage-ratio-display" style="font-size: 1.1rem;">0.0%</strong>
             </div>
 
-            <div style="margin-bottom: 12px; text-align: center;">
-              <span id="banco-solvency-semaphore" class="badge badge-success" style="font-size: 0.95rem; padding: 6px 16px; display: inline-block;">
+            <div style="margin-bottom: 8px; text-align: center;">
+              <span id="banco-solvency-semaphore" class="badge badge-success" style="font-size: 0.82rem; padding: 4px 14px; display: inline-block;">
                 <span class="pixel-icon icon-check"></span> Solvente / Bajo Riesgo (&lt;50%)
               </span>
             </div>
 
-            <div class="metric-row" style="padding-top: 10px; border-top: 1px solid var(--border-color, #333);">
+            <div class="metric-row" style="padding-top: 6px; border-top: 1px solid var(--border-color, #333);">
               <span>Tope Rígido de Crédito Adicional:</span>
               <strong id="banco-max-credit-display" class="val-positive">$0.00</strong>
             </div>
 
-            <div style="margin-top: 8px; font-size: 0.76rem; color: var(--text-muted); line-height: 1.3;">
+            <div style="margin-top: 6px; font-size: 0.74rem; color: var(--text-muted); line-height: 1.3;">
               * <em>Restricción Mecánica Infranqueable:</em> Si D/A supera 80%, la empresa entra en quiebra técnica inmediata en la liquidación semanal.
             </div>
           </div>
         </div>
 
         <!-- 3. Control Bilateral de Tesorería (RF-09.2, RF-09.3) -->
-        <div class="card" id="banco-operation-card" style="margin-bottom: 14px;">
+        <div class="card" id="banco-operation-card" style="margin-bottom: 10px;">
           <h3 class="card-title"><span class="pixel-icon icon-scale"></span> 3. Solicitud de Crédito (+) o Amortización Anticipada (-)</h3>
-          <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: -4px; margin-bottom: 14px;">
-            Desplaza el slider hacia la derecha para obtener liquidez inmediata o hacia la izquierda para cancelar deuda y ahorrar intereses semanales.
+          <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: -2px; margin-bottom: 8px;">
+            Desplaza el slider hacia la derecha para liquidez o hacia la izquierda para cancelar deuda y ahorrar intereses.
           </p>
 
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <span style="font-size: 0.85rem; color: var(--text-muted);">Variación de Capital Solicitada:</span>
-            <strong id="banco-variation-display" style="font-size: 1.3rem; color: #60a5fa;">$0.00</strong>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-size: 0.80rem; color: var(--text-muted);">Variación de Capital Solicitada:</span>
+            <strong id="banco-variation-display" style="font-size: 1.15rem; color: #60a5fa;">$0.00</strong>
           </div>
 
-          <div style="margin: 12px 0;">
-            <input type="range" id="banco-credit-slider" min="0" max="0" step="10000" value="0" style="width: 100%; accent-color: #3b82f6; cursor: pointer;">
-            <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">
-              <span>⬅️ Amortizar Deuda (-Deuda)</span>
-              <span>$0 (Sin cambio)</span>
-              <span>Solicitar Crédito (+Deuda) ➡️</span>
+          <yerba-decision-slider id="banco-decision-slider" min="0" max="0" step="10000" value="0" accent-color="#3b82f6">
+            <div slot="controls">
+              <input type="range" id="banco-credit-slider" min="0" max="0" step="10000" value="0" style="width: 100%; accent-color: #3b82f6; cursor: pointer;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.70rem; color: var(--text-muted); margin-top: 2px;">
+                <span>⬅️ Amortizar Deuda (-Deuda)</span>
+                <span>$0 (Sin cambio)</span>
+                <span>Solicitar Crédito (+Deuda) ➡️</span>
+              </div>
+              <div style="display: flex; gap: 8px; align-items: center; margin-top: 8px;">
+                <label for="banco-debt-variation-input" style="font-size: 0.78rem; color: var(--text-muted); white-space: nowrap;">
+                  Ajuste Numérico Exacto ($):
+                </label>
+                <input type="number" id="banco-debt-variation-input" step="10000" value="0" class="input-control" style="flex: 1; padding: 5px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
+              </div>
             </div>
-          </div>
-
-          <div style="display: flex; gap: 12px; align-items: center; margin-top: 14px;">
-            <label for="banco-debt-variation-input" style="font-size: 0.82rem; color: var(--text-muted); white-space: nowrap;">
-              Ajuste Numérico Exacto ($):
-            </label>
-            <input type="number" id="banco-debt-variation-input" step="10000" value="0" class="input-control" style="flex: 1; padding: 8px; border-radius: 4px; border: 1px solid var(--border-color, #333); background: var(--bg-card, #1e293b); color: #fff;">
-          </div>
+          </yerba-decision-slider>
         </div>
 
         <!-- 4. Barra de Guardado Local de Banco (RF-03, RF-04) -->
-        <div class="card" style="text-align: right; padding: 14px; background: rgba(255, 255, 255, 0.02); display: flex; justify-content: space-between; align-items: center;">
-          <span style="font-size: 0.85rem; color: var(--text-muted);">
+        <div class="card scene-bottom-bar">
+          <span style="font-size: 0.78rem; color: var(--text-muted);">
             * Para amortizar deuda se requiere saldo de caja positivo equivalente al monto cancelado.
           </span>
-          <button id="btn-save-banco" class="btn btn-primary" type="button" style="font-size: 0.95rem; padding: 10px 24px; background: #2563eb; border-color: #1d4ed8;">
+          <button id="btn-save-banco" class="btn btn-primary" type="button" style="font-size: 0.88rem; padding: 7px 18px; background: #2563eb; border-color: #1d4ed8;">
             <span class="pixel-icon icon-save"></span> Confirmar Operación Financiera
           </button>
         </div>
       </div>
 
       <!-- Modal Guiado Secuencial de Tutorial Semana 1 (RF-10) -->
-      <div id="spatial-tutorial-modal" class="modal-overlay" style="display: none; position: fixed; z-index: 9999; inset: 0; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(4px); align-items: center; justify-content: center;">
+      <div id="spatial-tutorial-modal" class="modal-overlay tutorial-modal" style="display: none; position: fixed; z-index: 9999; inset: 0; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(4px); align-items: center; justify-content: center;">
         <div class="modal-content" style="max-width: 540px; width: 90%; background: #1e293b; border: 1px solid #3b82f6; border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); padding: 20px; color: #fff;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 8px;">
             <span id="tutorial-step-badge" class="badge" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid #3b82f6; font-size: 0.85rem;">
               Inducción Semana 1 - Paso 1 de 5
             </span>
             <button id="btn-tutorial-skip" class="btn btn-secondary" type="button" style="font-size: 0.75rem; padding: 4px 10px;">
-              Saltar Inducción ⏭️
+              Omitir / Skip ⏭️
             </button>
           </div>
           <div style="margin-bottom: 16px;">
@@ -663,7 +666,10 @@
               Bienvenido a YerbaMateSim. La Oficina Administrativa es tu centro neurálgico: aquí monitoreas la solvencia patrimonial, revisas las alertas agronómicas del INTA y ejecutas de manera exclusiva el cierre de turno semanal.
             </p>
           </div>
-          <div style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 12px;">
+          <div style="display: flex; justify-content: space-between; gap: 10px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 12px;">
+            <button id="btn-tutorial-prev" class="btn btn-secondary" type="button" style="padding: 8px 18px; font-size: 0.9rem;">
+              ⬅️ Anterior
+            </button>
             <button id="btn-tutorial-next" class="btn btn-primary" type="button" style="padding: 8px 18px; font-size: 0.9rem; background: #2563eb;">
               Siguiente Escenario ➡️
             </button>
@@ -671,9 +677,18 @@
         </div>
       </div>
 
-      
       <!-- Hidden Legacy Container (Maintained strictly for automated test harness compatibility without visual intrusion) -->
       <div id="legacy-test-harness-container" style="display: none !important;" aria-hidden="true">
+        <!-- Panel contextual lateral y Empty States (RF-01, RF-13) -->
+        <div id="spot-board" class="sidebar-spot pizarra-spot card">
+          <div id="side-spot-empty-state" class="empty-state">Semana 1: Sin datos previos de pizarra spot.</div>
+        </div>
+        <div id="rival-radar" class="radar-rival card">
+          <div id="rival-empty-state" class="empty-state">Semana 1: Sin datos previos de inteligencia competitiva.</div>
+        </div>
+        <div id="history-panel" class="card">
+          <div id="history-empty-state" class="empty-state">Semana 1: Sin registros contables previos.</div>
+        </div>
 <!-- Visualizador de Cadena de Valor (RF-12) -->
       <div class="stages-container">
         <div class="stage-card empty" id="stage-card-vivero">
@@ -1479,7 +1494,7 @@
       <form id="form-student" onsubmit="event.preventDefault();">
         <div class="form-group">
           <label for="input-student-name">Nombre y Apellido *</label>
-          <input type="text" id="input-student-name" class="form-control" placeholder="Ej. Lucía Benítez" required autocomplete="name">
+          <input type="text" id="input-student-name" class="form-control" placeholder="Ej. Julio Ríos" required autocomplete="name">
           <div id="error-student-name" class="field-error" style="display: none;">El nombre es obligatorio</div>
         </div>
         <div class="form-group" style="margin-top: 14px;">
@@ -1817,7 +1832,7 @@
         <div style="display:flex; align-items:center; gap:10px;">
           <span style="font-size: 1.8rem;">📖</span>
           <div>
-            <h2 style="font-size: 1.35rem; color: var(--accent-green); margin:0;">Guía de Juego & Reglas del Negocio</h2>
+            <h2 style="font-size: 1.35rem; color: var(--accent-green); margin:0;">Guía de Simulador y Reglas del Negocio</h2>
             <span style="font-size: 0.8rem; color: var(--text-secondary);">Manual Operativo, Estándar Agroindustrial y Mecánicas de Quiebra</span>
           </div>
         </div>
@@ -1983,18 +1998,18 @@
       </div>
     </div>
     <div class="bottom-bar-kpis">
-      <div class="bar-kpi">
-        <span class="bar-kpi-lbl">Flujo Neto Semanal:</span>
-        <span class="bar-kpi-val" id="proj-cash-flow" data-alias="bottom-cash-delta"><span id="bottom-cash-delta">$0.00</span></span>
-      </div>
-      <div class="bar-kpi">
-        <span class="bar-kpi-lbl">Caja Proyectada:</span>
-        <span class="bar-kpi-val" id="proj-closing-cash" data-alias="bottom-projected-cash"><span id="bottom-projected-cash">$0.00</span></span>
-      </div>
-      <div class="bar-kpi">
-        <span class="bar-kpi-lbl">Apalancamiento (D/A):</span>
-        <span class="bar-kpi-val" id="proj-debt-ratio" data-alias="bottom-leverage-display"><span id="bottom-leverage-display">0.0%</span></span>
-      </div>
+      <yerba-kpi-chip class="bar-kpi" id="proj-cash-flow-chip">
+        <span slot="label" class="bar-kpi-lbl">Flujo Neto Semanal:</span>
+        <span slot="value" class="bar-kpi-val" id="proj-cash-flow" data-alias="bottom-cash-delta"><span id="bottom-cash-delta">$0.00</span></span>
+      </yerba-kpi-chip>
+      <yerba-kpi-chip class="bar-kpi" id="proj-closing-cash-chip">
+        <span slot="label" class="bar-kpi-lbl">Caja Proyectada:</span>
+        <span slot="value" class="bar-kpi-val" id="proj-closing-cash" data-alias="bottom-projected-cash"><span id="bottom-projected-cash">$0.00</span></span>
+      </yerba-kpi-chip>
+      <yerba-kpi-chip class="bar-kpi" id="proj-debt-ratio-chip">
+        <span slot="label" class="bar-kpi-lbl">Apalancamiento (D/A):</span>
+        <span slot="value" class="bar-kpi-val" id="proj-debt-ratio" data-alias="bottom-leverage-display"><span id="bottom-leverage-display">0.0%</span></span>
+      </yerba-kpi-chip>
     </div>
     <div class="bottom-bar-status">
       <span id="proj-status-badge" class="proj-badge badge-solvent"><span class="pixel-icon icon-check"></span> Solvente</span>
@@ -2043,165 +2058,8 @@
   <script type="module" src="js/main.js"></script>
   <script src="js/app.js"></script>
 
-  <!-- Robust Spatial Navigation and Scene Switcher Initializer -->
-  <script>
-    function switchSpatialScene(targetLoc) {
-      var locations = ["oficina", "produccion", "mercado", "banco"];
-      if (!locations.includes(targetLoc)) return;
-
-      locations.forEach(function(l) {
-        var b = document.getElementById("nav-btn-" + l);
-        if (b) {
-          var isActive = (l === targetLoc);
-          b.classList.toggle("active", isActive);
-          b.setAttribute("aria-selected", isActive ? "true" : "false");
-        }
-        var s = document.getElementById("scene-" + l);
-        if (s) {
-          s.style.display = (l === targetLoc) ? "block" : "none";
-          s.classList.toggle("active", l === targetLoc);
-        }
-      });
-      if (document.body) {
-        document.body.setAttribute("data-spatial-location", targetLoc);
-      }
-
-      // Sync with spatialNavigator & sceneRenderer if available
-      try {
-        if (window.YerbaMateSimModules) {
-          if (window.YerbaMateSimModules.spatial && window.YerbaMateSimModules.spatial.spatialNavigator) {
-            window.YerbaMateSimModules.spatial.spatialNavigator.activeLocation = targetLoc;
-          }
-          if (window.gameState) {
-            if (!window.gameState.spatial_ui) window.gameState.spatial_ui = {};
-            window.gameState.spatial_ui.active_location = targetLoc;
-          }
-          if (window.YerbaMateSimModules.renderer && window.YerbaMateSimModules.renderer.sceneRenderer && window.gameState) {
-            var sr = window.YerbaMateSimModules.renderer.sceneRenderer;
-            if (targetLoc === "oficina") sr.renderOficina(window.gameState);
-            else if (targetLoc === "produccion") sr.renderProduccion(window.gameState);
-            else if (targetLoc === "mercado") sr.renderMercado(window.gameState);
-            else if (targetLoc === "banco") sr.renderBanco(window.gameState);
-          }
-        }
-      } catch (err) {
-        console.warn("[switchSpatialScene] Sincronización secundaria diferida:", err);
-      }
-
-      // Update real-time projections
-      try {
-        if (typeof updateBottomBarProjections === "function") {
-          updateBottomBarProjections();
-        }
-      } catch (err) {}
-    }
-
-    window.switchSpatialScene = switchSpatialScene;
-
-    function initSpatialUI() {
-      var locations = ["oficina", "produccion", "mercado", "banco"];
-      locations.forEach(function(loc) {
-        var btn = document.getElementById("nav-btn-" + loc);
-        if (btn) {
-          btn.onclick = function(e) {
-            if (e) e.preventDefault();
-            switchSpatialScene(loc);
-          };
-        }
-      });
-
-      // Initialize sceneRenderer UI bindings if available
-      try {
-        if (window.YerbaMateSimModules && window.YerbaMateSimModules.renderer && window.YerbaMateSimModules.renderer.sceneRenderer) {
-          window.YerbaMateSimModules.renderer.sceneRenderer.bindUI(
-            function() { return window.gameState; },
-            window.YerbaMateSimModules.spatial ? window.YerbaMateSimModules.spatial.spatialNavigator : null
-          );
-        }
-      } catch (e) {
-        console.warn("[initSpatialUI] Error inicializando bindings de sceneRenderer:", e);
-      }
-
-      // Initialize projections reactive listeners if available
-      try {
-        if (typeof Projections !== "undefined" && Projections.bindSpatialProjectionsEvents && window.gameState) {
-          Projections.bindSpatialProjectionsEvents(window.gameState);
-        }
-      } catch (e) {}
-
-      // Wiring Modal de Herramientas y Auditoría
-      var btnOpenTools = document.getElementById("btn-open-tools");
-      var btnCloseTools = document.getElementById("btn-close-tools-modal");
-      var toolsModal = document.getElementById("tools-modal");
-
-      if (btnOpenTools && toolsModal) {
-        btnOpenTools.onclick = function() {
-          toolsModal.style.display = "flex";
-        };
-      }
-      if (btnCloseTools && toolsModal) {
-        btnCloseTools.onclick = function() {
-          toolsModal.style.display = "none";
-        };
-      }
-      if (toolsModal) {
-        toolsModal.onclick = function(e) {
-          if (e.target === toolsModal) {
-            toolsModal.style.display = "none";
-          }
-        };
-      }
-
-      // Wiring Guide Modal
-      var btnOpenGuide = document.getElementById("btn-open-guide");
-      var btnCloseGuide = document.getElementById("btn-close-guide");
-      var btnGuideUnderstood = document.getElementById("btn-guide-understood");
-      var guideModal = document.getElementById("guide-modal");
-
-      var closeGuideFn = function() {
-        if (guideModal) guideModal.style.display = "none";
-      };
-      if (btnOpenGuide && guideModal) {
-        btnOpenGuide.onclick = function() {
-          guideModal.style.display = "flex";
-        };
-      }
-      if (btnCloseGuide) btnCloseGuide.onclick = closeGuideFn;
-      if (btnGuideUnderstood) btnGuideUnderstood.onclick = closeGuideFn;
-      if (guideModal) {
-        guideModal.onclick = function(e) {
-          if (e.target === guideModal) guideModal.style.display = "none";
-        };
-      }
-
-      // Wiring Glossary Drawer
-      var btnOpenGlossary = document.getElementById("btn-open-glossary");
-      var btnCloseGlossary = document.getElementById("btn-close-glossary-drawer");
-      var glossaryDrawer = document.getElementById("glossary-drawer");
-
-      if (btnOpenGlossary && glossaryDrawer) {
-        btnOpenGlossary.onclick = function() {
-          glossaryDrawer.classList.toggle("open");
-        };
-      }
-      if (btnCloseGlossary && glossaryDrawer) {
-        btnCloseGlossary.onclick = function() {
-          glossaryDrawer.classList.remove("open");
-        };
-      }
-
-      // Ensure initial scene is oficina
-      switchSpatialScene("oficina");
-    }
-
-    window.initSpatialUI = initSpatialUI;
-
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", initSpatialUI);
-    } else {
-      initSpatialUI();
-    }
-  </script>
+  <!-- Robust Spatial Navigation and Scene Switcher Initializer (External script for strict CSP script-src 'self') -->
+  <script type="module" src="js/spatial-ui-init.js"></script>
 
 </body>
 </html>

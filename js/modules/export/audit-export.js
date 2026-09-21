@@ -6,6 +6,27 @@
 import { computeSHA256Sync, computeHistoryHashSync } from "../engine/math.js";
 
 /**
+ * Neutralizes formula injection (=, +, -, @, \t, \r) and quotes CSV cells containing special characters.
+ * @param {*} val
+ * @returns {string}
+ */
+export function sanitizeCSVCell(val) {
+  if (val === null || val === undefined) return "";
+  if (typeof val === "number" || typeof val === "boolean") return String(val);
+
+  let str = String(val);
+  // Neutralize formula injection / DDE execution triggers
+  if (/^[=+\-@\t\r]/.test(str)) {
+    str = "'" + str;
+  }
+  // Quote if contains commas, double-quotes, or newlines
+  if (/[",\n\r]/.test(str)) {
+    str = `"${str.replace(/"/g, '""')}"`;
+  }
+  return str;
+}
+
+/**
  * Generates forensic academic audit CSV with SHA-256 anti-tamper header.
  * @param {object} stateObj GameState object
  * @returns {string} Fully formatted CSV string
@@ -36,8 +57,8 @@ export function generateAuditCSV(stateObj = null) {
       if (typeof crew === "object" && crew.value) crew = crew.value;
       rows.push([
         Number(e.turn ?? 1),
-        String(e.fase_proceso ?? "RESUMEN_TURNO"),
-        String(crew),
+        sanitizeCSVCell(e.fase_proceso ?? "RESUMEN_TURNO"),
+        sanitizeCSVCell(crew),
         Number(e.kg_cosechados_hv ?? 0.0),
         Number(e.kg_perdidos_ardido ?? 0.0),
         Number(e.calidad_iram_lote ?? 100),
@@ -61,8 +82,8 @@ export function generateAuditCSV(stateObj = null) {
 
       rows.push([
         turn,
-        fase,
-        crew,
+        sanitizeCSVCell(fase),
+        sanitizeCSVCell(crew),
         kgCosechados,
         kgArdido,
         calidad,
@@ -85,8 +106,8 @@ export function generateAuditCSV(stateObj = null) {
 
     rows.push([
       turn,
-      fase,
-      crew,
+      sanitizeCSVCell(fase),
+      sanitizeCSVCell(crew),
       kgCosechados,
       kgArdido,
       calidad,
@@ -98,7 +119,9 @@ export function generateAuditCSV(stateObj = null) {
 
   const csvBody = headers.join(",") + "\n" + rows.join("\n") + "\n";
   const sha256Hash = computeSHA256Sync(csvBody);
-  const headerMeta = `# YerbaMateSim Academic Audit Log\n# Student: ${s.name || "Estudiante"} (${s.student_id || "LEG-00000"})\n# SHA-256: ${sha256Hash}\n`;
+  const safeName = String(s.name || "Estudiante").replace(/[\r\n]/g, " ").trim();
+  const safeStudentId = String(s.student_id || "LEG-00000").replace(/[\r\n]/g, " ").trim();
+  const headerMeta = `# YerbaMateSim Academic Audit Log\n# Student: ${safeName} (${safeStudentId})\n# SHA-256: ${sha256Hash}\n`;
 
   return headerMeta + csvBody;
 }
