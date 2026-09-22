@@ -1494,26 +1494,39 @@
 
   <div id="student-modal" class="modal-overlay" style="display: flex;">
     <div class="modal-content student-modal-box">
-      <div class="modal-icon"><span class="pixel-icon icon-mate pixel-icon-lg"></span></div>
-      <h2 style="font-size: 1.6rem; color: var(--accent-green); margin-bottom: 8px;">YerbaMateSim: Consola Gerencial</h2>
-      <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.95rem;">
-        Bienvenido al simulador agroindustrial de yerba mate. Para comenzar la simulación de 120 semanas y registrar tu evaluación académica, ingresa tus datos:
-      </p>
-      <form id="form-student" onsubmit="event.preventDefault();">
-        <div class="form-group">
-          <label for="input-student-name">Nombre y Apellido *</label>
-          <input type="text" id="input-student-name" class="form-control" placeholder="Ej. Julio Ríos" required autocomplete="name">
-          <div id="error-student-name" class="field-error" style="display: none;">El nombre es obligatorio</div>
+      <div class="student-modal-header">
+        <div class="student-modal-hero-wrapper">
+          <img src="assets/dioramas/ingreso.webp" alt="YerbaMateSim Presentación" class="student-modal-hero-img" width="180" height="178">
         </div>
-        <div class="form-group" style="margin-top: 14px;">
-          <label for="input-student-id">Número de Legajo / Matrícula *</label>
-          <input type="text" id="input-student-id" class="form-control" placeholder="Ej. LEG-89421" required autocomplete="off">
-          <div id="error-student-id" class="field-error" style="display: none;">El legajo es obligatorio</div>
+        <div class="student-modal-badge">
+          <span class="pixel-icon icon-leaf"></span> Simulador Gerencial Agroindustrial
         </div>
-        <button type="submit" id="btn-start-simulation" class="btn btn-primary" style="margin-top: 24px;">
-          Iniciar Simulación (Semana 1) <span class="pixel-icon icon-rocket"></span>
-        </button>
-      </form>
+        <h2 class="student-modal-title">YerbaMateSim: Consola Gerencial</h2>
+        <p class="student-modal-subtitle">
+          Toma de decisiones estratégicas, producción, comercialización y gestión financiera de un establecimiento yerbatero en Misiones.
+        </p>
+      </div>
+      <div class="student-modal-form-container">
+        <p class="student-modal-instruction">
+          Para comenzar la simulación de 120 semanas y registrar tu evaluación académica, ingresa tus datos:
+        </p>
+        <form id="form-student" onsubmit="event.preventDefault();">
+          <div class="form-group">
+            <label for="input-student-name">Nombre y Apellido *</label>
+            <input type="text" id="input-student-name" class="form-control" placeholder="Ej. Julio Ríos" required autocomplete="name">
+            <div id="error-student-name" class="field-error" style="display: none;">El nombre es obligatorio</div>
+          </div>
+          <div class="form-group" style="margin-top: 14px;">
+            <label for="input-student-id">Número de Legajo / Matrícula *</label>
+            <input type="text" id="input-student-id" class="form-control" placeholder="Ej. LEG-89421" required autocomplete="off">
+            <div id="error-student-id" class="field-error" style="display: none;">El legajo es obligatorio</div>
+          </div>
+          <button type="submit" id="btn-start-simulation" class="btn btn-primary btn-student-start" style="margin-top: 22px;">
+            <span>Iniciar Simulación (Semana 1)</span>
+            <span class="pixel-icon icon-rocket"></span>
+          </button>
+        </form>
+      </div>
     </div>
   </div>
 
