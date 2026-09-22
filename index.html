@@ -195,10 +195,10 @@
 
         <!-- Resumen de Cierre Operativo (RF-06) -->
         <div class="card card-oficina-summary" style="text-align: center; background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.35);">
-          <p style="margin: 0 0 8px 0; font-size: 0.80rem; color: var(--text-secondary);">
+          <p style="margin: 0 0 14px 0; font-size: 0.82rem; color: var(--text-secondary); line-height: 1.45;">
             <span class="pixel-icon icon-info"></span> <strong>Centro de Liquidación Semanal:</strong> Revisa el consolidador de órdenes departamentales. Al confirmar tus decisiones de Producción, Mercado y Banco, ejecuta el turno para procesar la semana frente a AgroYerba del Norte.
           </p>
-          <button id="btn-oficina-execute" class="btn btn-primary btn-execute-turn" type="button" style="padding: 8px 22px; font-size: 0.90rem; font-weight: bold; background: #10b981; border: none; cursor: pointer; border-radius: 6px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
+          <button id="btn-oficina-execute" class="btn btn-primary btn-execute-turn" type="button" style="width: auto; max-width: max-content; padding: 9px 24px; font-size: 0.90rem; font-weight: bold; background: #10b981; color: #ffffff; border: none; cursor: pointer; border-radius: 6px; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">
             <span class="pixel-icon icon-lightning"></span> ⚡ Ejecutar y Liquidar Turno Semanal
           </button>
         </div>
@@ -367,10 +367,10 @@
 
         <!-- 5. Barra de Guardado Local de Producción (RF-03, RF-04) -->
         <div class="card scene-bottom-bar">
-          <span style="font-size: 0.78rem; color: var(--text-muted);">
+          <span class="scene-bottom-note" style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.45; margin-right: 18px;">
             * Se requiere saldo de caja positivo para validar las decisiones de siembra, cosecha y CapEx.
           </span>
-          <button id="btn-save-produccion" class="btn btn-primary" type="button" style="font-size: 0.88rem; padding: 7px 18px;">
+          <button id="btn-save-produccion" class="btn btn-primary" type="button" style="width: auto; max-width: max-content; font-size: 0.88rem; padding: 8px 20px; background: #10b981; border: none; color: #ffffff; font-weight: 600;">
             <span class="pixel-icon icon-save"></span> Confirmar y Guardar Órdenes de Producción
           </button>
         </div>
@@ -423,11 +423,11 @@
             </div>
 
             <!-- Bypass Logístico Selector (RF-08.1) -->
-            <div style="padding: 6px 10px; background: rgba(2, 132, 199, 0.1); border-left: 3px solid #0284c7; border-radius: 4px;">
-              <label style="display: flex; align-items: flex-start; gap: 6px; cursor: pointer; font-size: 0.76rem; color: #bae6fd;">
+            <div class="bypass-notice-box" style="padding: 6px 10px; background: rgba(2, 132, 199, 0.12); border-left: 3px solid #0284c7; border-radius: 4px;">
+              <label class="bypass-notice-label" style="display: flex; align-items: flex-start; gap: 6px; cursor: pointer; font-size: 0.76rem; color: #1e40af; line-height: 1.4;">
                 <input type="checkbox" id="merc-bypass-warehouse" checked style="margin-top: 2px; accent-color: #0284c7;">
                 <span>
-                  <strong><span class="pixel-icon icon-lightning"></span> Circuito Bypass Logístico Activo:</strong> La canchada mayorista omite el sapecado y secado e ingresa directamente a estacionamiento sin saturar la tolva ni generar riesgo de ardido.
+                  <strong style="color: #1d4ed8;"><span class="pixel-icon icon-lightning"></span> Circuito Bypass Logístico Activo:</strong> La canchada mayorista omite el sapecado y secado e ingresa directamente a estacionamiento sin saturar la tolva ni generar riesgo de ardido.
                 </span>
               </label>
             </div>
@@ -523,10 +523,10 @@
 
         <!-- 5. Barra de Guardado Local de Mercado (RF-03, RF-04) -->
         <div class="card scene-bottom-bar">
-          <span style="font-size: 0.78rem; color: var(--text-muted);">
+          <span class="scene-bottom-note" style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.45; margin-right: 18px;">
             * Las compras spot de hoja verde y canchada se debitan inmediatamente contra tu saldo de caja disponible.
           </span>
-          <button id="btn-save-mercado" class="btn btn-primary" type="button" style="font-size: 0.88rem; padding: 7px 18px;">
+          <button id="btn-save-mercado" class="btn btn-primary" type="button" style="width: auto; max-width: max-content; font-size: 0.88rem; padding: 8px 20px; background: #10b981; border: none; color: #ffffff; font-weight: 600;">
             <span class="pixel-icon icon-save"></span> Confirmar y Guardar Órdenes de Mercado
           </button>
         </div>
@@ -638,10 +638,10 @@
 
         <!-- 4. Barra de Guardado Local de Banco (RF-03, RF-04) -->
         <div class="card scene-bottom-bar">
-          <span style="font-size: 0.78rem; color: var(--text-muted);">
+          <span class="scene-bottom-note" style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.45; margin-right: 18px;">
             * Para amortizar deuda se requiere saldo de caja positivo equivalente al monto cancelado.
           </span>
-          <button id="btn-save-banco" class="btn btn-primary" type="button" style="font-size: 0.88rem; padding: 7px 18px; background: #2563eb; border-color: #1d4ed8;">
+          <button id="btn-save-banco" class="btn btn-primary" type="button" style="width: auto; max-width: max-content; font-size: 0.88rem; padding: 8px 20px; background: #2563eb; border: 1px solid #1d4ed8; color: #ffffff; font-weight: 600;">
             <span class="pixel-icon icon-save"></span> Confirmar Operación Financiera
           </button>
         </div>
@@ -1473,6 +1473,14 @@
           </button>
         </div>
 
+        <div class="tool-action-card">
+          <h4>🎓 Inducción y Tutorial</h4>
+          <p>Vuelve a recorrer la guía interactiva por los 4 cuadrantes operativos.</p>
+          <button id="btn-restart-tutorial" class="btn btn-secondary" style="width: 100%; margin-top: 8px;">
+            <span class="pixel-icon icon-info"></span> Ver Tutorial Interactivo
+          </button>
+        </div>
+
         <div class="tool-action-card tool-action-danger">
           <h4>🔄 Reinicio de Partida</h4>
           <p>Restablece el simulador al estado Greenfield inicial (Semana 1).</p>
@@ -1514,7 +1522,7 @@
     <div class="modal-content tutorial-content-box">
       <div class="tutorial-header">
         <div class="tutorial-header-left">
-          <span class="tutorial-step-badge" id="tutorial-step-badge">Paso 1 de 5</span>
+          <span class="tutorial-step-badge" id="legacy-tutorial-step-badge">Paso 1 de 5</span>
           <h3 class="tutorial-title" id="tutorial-title">1. Cabecera de KPIs de Supervivencia</h3>
         </div>
         <button id="btn-tutorial-skip-top" class="tutorial-skip-link" type="button" title="Omitir Tutorial">Omitir (Skip) ✕</button>
@@ -1528,14 +1536,14 @@
         </div>
       </div>
       <div class="tutorial-footer">
-        <button id="btn-tutorial-skip" class="btn btn-secondary btn-tutorial-skip" type="button">
+        <button id="legacy-btn-tutorial-skip" class="btn btn-secondary btn-tutorial-skip" type="button">
           Omitir Tutorial (Skip)
         </button>
         <div class="tutorial-nav-buttons">
-          <button id="btn-tutorial-prev" class="btn btn-secondary btn-tutorial-prev" type="button" disabled>
+          <button id="legacy-btn-tutorial-prev" class="btn btn-secondary btn-tutorial-prev" type="button" disabled>
             ◀ Anterior
           </button>
-          <button id="btn-tutorial-next" class="btn btn-primary btn-tutorial-next" type="button">
+          <button id="legacy-btn-tutorial-next" class="btn btn-primary btn-tutorial-next" type="button">
             Siguiente ▶
           </button>
         </div>
@@ -1885,7 +1893,10 @@
         </section>
       </div>
 
-      <div class="modal-footer" style="padding-top: 14px; border-top: 1px solid var(--border-color); display:flex; justify-content:flex-end;">
+      <div class="modal-footer" style="padding-top: 14px; border-top: 1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center; gap: 10px;">
+        <button id="btn-guide-start-tutorial" class="btn btn-secondary" type="button" style="font-size: 0.85rem;">
+          🔄 Ver Tutorial Interactivo
+        </button>
         <button id="btn-guide-understood" class="btn btn-primary" type="button">
           Entendido, volver a la simulación ➔
         </button>

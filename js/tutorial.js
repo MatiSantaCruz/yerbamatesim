@@ -64,9 +64,15 @@
   }
 
   function isTutorialCompleted() {
-    if (typeof gameState !== "undefined" && gameState && gameState.ui_state) {
-      if (gameState.ui_state.tutorial_completed) return true;
+    const s = typeof gameState !== "undefined" ? gameState : (typeof window !== "undefined" ? window.gameState : null);
+    if (s) {
+      if (s.spatial_ui && s.spatial_ui.tutorial_completed) return true;
+      if (s.ui_state && s.ui_state.tutorial_completed) return true;
     }
+    const sn = (typeof window !== "undefined" && window.YerbaMateSimModules && window.YerbaMateSimModules.spatial && window.YerbaMateSimModules.spatial.spatialNavigator)
+      || (typeof window !== "undefined" ? window.spatialNavigator : null);
+    if (sn && sn.tutorialCompleted) return true;
+
     try {
       return localStorage.getItem(STORAGE_KEY_TUTORIAL_COMPLETED) === "true";
     } catch (e) {
@@ -75,8 +81,16 @@
   }
 
   function setTutorialCompleted(completed = true) {
-    if (typeof gameState !== "undefined" && gameState && gameState.ui_state) {
-      gameState.ui_state.tutorial_completed = completed;
+    const s = typeof gameState !== "undefined" ? gameState : (typeof window !== "undefined" ? window.gameState : null);
+    if (s) {
+      if (!s.spatial_ui) s.spatial_ui = {};
+      s.spatial_ui.tutorial_completed = completed;
+      if (s.ui_state) s.ui_state.tutorial_completed = completed;
+    }
+    const sn = (typeof window !== "undefined" && window.YerbaMateSimModules && window.YerbaMateSimModules.spatial && window.YerbaMateSimModules.spatial.spatialNavigator)
+      || (typeof window !== "undefined" ? window.spatialNavigator : null);
+    if (sn) {
+      sn.tutorialCompleted = completed;
     }
     try {
       if (completed) {
@@ -86,8 +100,8 @@
       }
     } catch (e) {}
 
-    if (typeof simStorage !== "undefined" && simStorage.saveGameStateToStorage && typeof gameState !== "undefined" && gameState) {
-      simStorage.saveGameStateToStorage(gameState);
+    if (typeof simStorage !== "undefined" && simStorage.saveGameStateToStorage && s) {
+      simStorage.saveGameStateToStorage(s);
     }
   }
 
@@ -234,6 +248,22 @@
   }
 
   function startGuidedTutorial() {
+    const sn = (typeof window !== "undefined" && window.YerbaMateSimModules && window.YerbaMateSimModules.spatial && window.YerbaMateSimModules.spatial.spatialNavigator)
+      || (typeof window !== "undefined" ? window.spatialNavigator : null);
+
+    if (sn && typeof sn.startTutorial === "function") {
+      const s = typeof gameState !== "undefined" ? gameState : (typeof window !== "undefined" ? window.gameState : null);
+      if (s) sn.setGameState(s);
+      sn.startTutorial();
+      return;
+    }
+
+    const spatialModal = document.getElementById("spatial-tutorial-modal");
+    if (spatialModal) {
+      spatialModal.style.display = "flex";
+      return;
+    }
+
     const modal = document.getElementById("tutorial-modal");
     if (modal) {
       modal.style.display = "block";
@@ -246,6 +276,13 @@
   }
 
   function nextStep() {
+    const sn = (typeof window !== "undefined" && window.YerbaMateSimModules && window.YerbaMateSimModules.spatial && window.YerbaMateSimModules.spatial.spatialNavigator)
+      || (typeof window !== "undefined" ? window.spatialNavigator : null);
+    if (sn && typeof sn.nextTutorialStep === "function" && sn.isTutorialActive()) {
+      sn.nextTutorialStep();
+      return;
+    }
+
     if (currentStepIndex < TUTORIAL_STEPS.length - 1) {
       renderStep(currentStepIndex + 1);
     } else {
@@ -254,22 +291,44 @@
   }
 
   function prevStep() {
+    const sn = (typeof window !== "undefined" && window.YerbaMateSimModules && window.YerbaMateSimModules.spatial && window.YerbaMateSimModules.spatial.spatialNavigator)
+      || (typeof window !== "undefined" ? window.spatialNavigator : null);
+    if (sn && typeof sn.prevTutorialStep === "function" && sn.isTutorialActive()) {
+      sn.prevTutorialStep();
+      return;
+    }
+
     if (currentStepIndex > 0) {
       renderStep(currentStepIndex - 1);
     }
   }
 
   function skipTutorial() {
+    const sn = (typeof window !== "undefined" && window.YerbaMateSimModules && window.YerbaMateSimModules.spatial && window.YerbaMateSimModules.spatial.spatialNavigator)
+      || (typeof window !== "undefined" ? window.spatialNavigator : null);
+    if (sn && typeof sn.skipTutorial === "function") {
+      sn.skipTutorial();
+    }
     setTutorialCompleted(true);
     closeTutorialModal();
   }
 
   function completeTutorial() {
+    const sn = (typeof window !== "undefined" && window.YerbaMateSimModules && window.YerbaMateSimModules.spatial && window.YerbaMateSimModules.spatial.spatialNavigator)
+      || (typeof window !== "undefined" ? window.spatialNavigator : null);
+    if (sn && typeof sn.completeTutorial === "function") {
+      sn.completeTutorial();
+    }
     setTutorialCompleted(true);
     closeTutorialModal();
   }
 
   function closeTutorialModal() {
+    const spatialModal = document.getElementById("spatial-tutorial-modal");
+    if (spatialModal) {
+      spatialModal.style.display = "none";
+      if (typeof spatialModal.setAttribute === "function") spatialModal.setAttribute("aria-hidden", "true");
+    }
     const modal = document.getElementById("tutorial-modal");
     if (modal) {
       modal.style.display = "none";
@@ -340,18 +399,21 @@
       });
     }
 
-    // Tutorial Tour Modal
-    const btnNext = document.getElementById("btn-tutorial-next");
-    if (btnNext) btnNext.addEventListener("click", nextStep);
+    // Modal Tutorial Tour (Bind only within tutorial-modal if distinct)
+    const tutModal = document.getElementById("tutorial-modal");
+    if (tutModal) {
+      const btnNext = tutModal.querySelector("#btn-tutorial-next");
+      if (btnNext) btnNext.addEventListener("click", nextStep);
 
-    const btnPrev = document.getElementById("btn-tutorial-prev");
-    if (btnPrev) btnPrev.addEventListener("click", prevStep);
+      const btnPrev = tutModal.querySelector("#btn-tutorial-prev");
+      if (btnPrev) btnPrev.addEventListener("click", prevStep);
 
-    const btnSkip = document.getElementById("btn-tutorial-skip");
-    if (btnSkip) btnSkip.addEventListener("click", skipTutorial);
+      const btnSkip = tutModal.querySelector("#btn-tutorial-skip");
+      if (btnSkip) btnSkip.addEventListener("click", skipTutorial);
 
-    const btnSkipTop = document.getElementById("btn-tutorial-skip-top");
-    if (btnSkipTop) btnSkipTop.addEventListener("click", skipTutorial);
+      const btnSkipTop = tutModal.querySelector("#btn-tutorial-skip-top");
+      if (btnSkipTop) btnSkipTop.addEventListener("click", skipTutorial);
+    }
 
     // ESC key closes active modals
     document.addEventListener("keydown", (e) => {
@@ -359,10 +421,7 @@
         if (guideModal && guideModal.style.display === "flex") {
           closeGuideModal();
         }
-        const tutModal = document.getElementById("tutorial-modal");
-        if (tutModal && tutModal.style.display !== "none") {
-          skipTutorial();
-        }
+        closeTutorialModal();
       }
     });
   }

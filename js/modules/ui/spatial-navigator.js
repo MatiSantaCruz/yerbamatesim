@@ -78,11 +78,23 @@ export class SpatialNavigator {
           if (typeof sp.tutorial_state.completed === "boolean") this.tutorialCompleted = sp.tutorial_state.completed;
         }
       }
-      if (typeof this.gameState.week === "number" && this.gameState.week > 1) {
+      if (typeof this.gameState.week === "number" && this.gameState.week !== 1) {
         this.tutorialCompleted = true;
       }
     } else {
-      this.tutorialCompleted = true;
+      try {
+        if (typeof localStorage !== "undefined") {
+          this.tutorialCompleted = localStorage.getItem("yerbamate_tutorial_completed") === "true";
+        } else {
+          this.tutorialCompleted = true;
+        }
+      } catch (e) {
+        this.tutorialCompleted = true;
+      }
+    }
+
+    if (typeof document !== "undefined") {
+      this.bindTutorialUI();
     }
   }
 
@@ -102,7 +114,7 @@ export class SpatialNavigator {
           if (typeof sp.tutorial_state.completed === "boolean") this.tutorialCompleted = sp.tutorial_state.completed;
         }
       }
-      if (typeof this.gameState.week === "number" && this.gameState.week > 1) {
+      if (typeof this.gameState.week === "number" && this.gameState.week !== 1) {
         this.tutorialCompleted = true;
       }
     }
@@ -114,9 +126,10 @@ export class SpatialNavigator {
    */
   isTutorialActive() {
     if (this.tutorialCompleted) return false;
-    if (!this.gameState) return false;
-    if (this.gameState.week !== 1) return false;
-    const sp = this.gameState.spatial_ui;
+    const state = this.gameState || (typeof window !== "undefined" ? window.gameState : null);
+    if (!state) return false;
+    if (state.week !== 1) return false;
+    const sp = state.spatial_ui;
     if (sp && sp.tutorial_completed) return false;
     return true;
   }
@@ -170,12 +183,66 @@ export class SpatialNavigator {
   }
 
   /**
+   * Returns to previous step of the tutorial (RF-10).
+   * @returns {boolean}
+   */
+  prevTutorialStep() {
+    if (!this.isTutorialActive()) return false;
+
+    if (this.tutorialStep > 1) {
+      this.tutorialStep -= 1;
+      const stepData = SPATIAL_TUTORIAL_STEPS.find(s => s.step === this.tutorialStep);
+      if (stepData) {
+        this.navigateTo(stepData.location, { tutorialOverride: true, force: true });
+      }
+      this._syncTutorialState();
+      this.renderTutorialModal();
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * Explicitly starts or restarts the 5-step spatial tutorial.
+   * @param {boolean} force
+   * @returns {boolean}
+   */
+  startTutorial(force = false) {
+    this.tutorialCompleted = false;
+    this.tutorialStep = 1;
+    const state = this.gameState || (typeof window !== "undefined" ? window.gameState : null);
+    if (state) {
+      if (!state.spatial_ui) state.spatial_ui = {};
+      state.spatial_ui.tutorial_completed = false;
+      state.spatial_ui.tutorial_step = 1;
+    }
+    try {
+      if (typeof localStorage !== "undefined") {
+        localStorage.removeItem("yerbamate_tutorial_completed");
+      }
+    } catch (e) {}
+    this._syncTutorialState();
+    this.bindTutorialUI();
+    const stepData = SPATIAL_TUTORIAL_STEPS.find(s => s.step === 1);
+    if (stepData) {
+      this.navigateTo(stepData.location, { tutorialOverride: true, force: true });
+    }
+    this.renderTutorialModal();
+    return true;
+  }
+
+  /**
    * Completes the tutorial, hides modal and unlocks autonomous 4-quadrant navigation (RF-10).
    * @returns {boolean}
    */
   completeTutorial() {
     this.tutorialCompleted = true;
     this._syncTutorialState();
+    try {
+      if (typeof localStorage !== "undefined") {
+        localStorage.setItem("yerbamate_tutorial_completed", "true");
+      }
+    } catch (e) {}
     if (typeof document !== "undefined") {
       const modal = document.getElementById("spatial-tutorial-modal");
       if (modal) {
@@ -193,6 +260,11 @@ export class SpatialNavigator {
   skipTutorial() {
     this.tutorialCompleted = true;
     this._syncTutorialState();
+    try {
+      if (typeof localStorage !== "undefined") {
+        localStorage.setItem("yerbamate_tutorial_completed", "true");
+      }
+    } catch (e) {}
     if (typeof document !== "undefined") {
       const modal = document.getElementById("spatial-tutorial-modal");
       if (modal) {
@@ -235,14 +307,67 @@ export class SpatialNavigator {
       btnNext.textContent = this.tutorialStep === 5 ? "Finalizar Inducción y Comenzar 🎉" : "Siguiente Escenario ➡️";
     }
 
+    const btnPrev = document.getElementById("btn-tutorial-prev");
+    if (btnPrev) {
+      btnPrev.disabled = (this.tutorialStep === 1);
+      btnPrev.style.opacity = (this.tutorialStep === 1) ? "0.4" : "1";
+      btnPrev.style.cursor = (this.tutorialStep === 1) ? "not-allowed" : "pointer";
+    }
+
     if (modal.style) modal.style.display = "flex";
     if (typeof modal.setAttribute === "function") modal.setAttribute("aria-hidden", "false");
+  }
+
+  /**
+   * Binds click events to tutorial navigation controls.
+   */
+  bindTutorialUI() {
+    if (typeof document === "undefined") return;
+
+    const btnTutorialNext = document.getElementById("btn-tutorial-next");
+    if (btnTutorialNext) {
+      btnTutorialNext.onclick = (e) => {
+        if (e && e.preventDefault) e.preventDefault();
+        if (this.tutorialStep >= 5) {
+          this.completeTutorial();
+        } else {
+          this.nextTutorialStep();
+        }
+      };
+    }
+
+    const btnTutorialPrev = document.getElementById("btn-tutorial-prev");
+    if (btnTutorialPrev) {
+      btnTutorialPrev.onclick = (e) => {
+        if (e && e.preventDefault) e.preventDefault();
+        this.prevTutorialStep();
+      };
+    }
+
+    const btnTutorialSkip = document.getElementById("btn-tutorial-skip");
+    if (btnTutorialSkip) {
+      btnTutorialSkip.onclick = (e) => {
+        if (e && e.preventDefault) e.preventDefault();
+        this.skipTutorial();
+      };
+    }
+
+    const modal = document.getElementById("spatial-tutorial-modal");
+    if (modal && !modal._spatialTutorialBound) {
+      if (typeof modal.addEventListener === "function") {
+        modal.addEventListener("click", (e) => {
+          if (e.target === modal) this.skipTutorial();
+        });
+      }
+      modal._spatialTutorialBound = true;
+    }
   }
 
   /**
    * Initializes tutorial UI if active for current week.
    */
   initTutorial() {
+    this.bindTutorialUI();
     if (this.isTutorialActive()) {
       const stepData = SPATIAL_TUTORIAL_STEPS.find(s => s.step === this.tutorialStep);
       if (stepData) {
@@ -792,21 +917,7 @@ export class SpatialNavigator {
     if (btnSave) btnSave.addEventListener("click", () => this.confirmSaveAndNavigate());
 
     // Tutorial buttons binding (RF-10)
-    const btnTutorialNext = document.getElementById("btn-tutorial-next");
-    if (btnTutorialNext) {
-      btnTutorialNext.addEventListener("click", () => {
-        if (this.tutorialStep >= 5) {
-          this.completeTutorial();
-        } else {
-          this.nextTutorialStep();
-        }
-      });
-    }
-
-    const btnTutorialSkip = document.getElementById("btn-tutorial-skip");
-    if (btnTutorialSkip) {
-      btnTutorialSkip.addEventListener("click", () => this.skipTutorial());
-    }
+    this.bindTutorialUI();
 
     // Initialize tutorial modal if active
     this.initTutorial();
@@ -815,3 +926,6 @@ export class SpatialNavigator {
 
 // Default singleton instance
 export const spatialNavigator = new SpatialNavigator();
+if (typeof window !== "undefined") {
+  window.spatialNavigator = spatialNavigator;
+}

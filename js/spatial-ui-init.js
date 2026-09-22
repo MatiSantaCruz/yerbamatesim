@@ -134,6 +134,27 @@ export function initSpatialUI() {
     };
   }
 
+  // Wiring Tutorial Restart Buttons (RF-10)
+  const btnRestartTutorial = document.getElementById("btn-restart-tutorial");
+  const btnGuideStartTutorial = document.getElementById("btn-guide-start-tutorial");
+
+  const launchSpatialTutorial = function(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    if (toolsModal) toolsModal.style.display = "none";
+    if (guideModal) guideModal.style.display = "none";
+    const sn = (typeof window !== "undefined" && window.YerbaMateSimModules && window.YerbaMateSimModules.spatial && window.YerbaMateSimModules.spatial.spatialNavigator)
+      || (typeof window !== "undefined" ? window.spatialNavigator : null);
+    if (sn && typeof sn.startTutorial === "function") {
+      if (window.gameState) sn.setGameState(window.gameState);
+      sn.startTutorial(true);
+    } else if (typeof window !== "undefined" && window.tutorial && typeof window.tutorial.startGuidedTutorial === "function") {
+      window.tutorial.startGuidedTutorial();
+    }
+  };
+
+  if (btnRestartTutorial) btnRestartTutorial.onclick = launchSpatialTutorial;
+  if (btnGuideStartTutorial) btnGuideStartTutorial.onclick = launchSpatialTutorial;
+
   // Wiring Glossary Drawer
   const btnOpenGlossary = document.getElementById("btn-open-glossary");
   const btnCloseGlossary = document.getElementById("btn-close-glossary-drawer");
